@@ -159,6 +159,56 @@ tr.fresh{animation:flash 1.2s ease-out}
 .slider:before{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .switch input:checked+.slider{background:#1e8e5a}
 .switch input:checked+.slider:before{transform:translateX(19px)}
+.theme-btn{margin-left:18px;width:34px;height:34px;border-radius:9px;border:1px solid #dfe5ef;background:#fff;font-size:16px;cursor:pointer;flex:none;line-height:1}
+.theme-btn:hover{background:#f5f7fb}
+/* ── 다크 모드 ── */
+html[data-theme="dark"] body{background:#0f1729;color:#e8ecf4}
+html[data-theme="dark"] header{background:#151d30;border-color:#26314a}
+html[data-theme="dark"] .logo{color:#e8ecf4}
+html[data-theme="dark"] .logo b i{color:#6b7794}
+html[data-theme="dark"] .hd{color:#94a0b8}
+html[data-theme="dark"] .co{background:#1a2438;border-color:#26314a;color:#e8ecf4}
+html[data-theme="dark"] .live{color:#94a0b8}
+html[data-theme="dark"] .corp .r b{color:#e8ecf4}
+html[data-theme="dark"] .corp .r span{color:#b6c0d6}
+html[data-theme="dark"] .theme-btn{background:#1a2438;border-color:#26314a}
+html[data-theme="dark"] aside{background:#151d30;border-color:#26314a}
+html[data-theme="dark"] .m-title{color:#6b7794}
+html[data-theme="dark"] .m-sec{color:#b6c0d6;border-color:#26314a}
+html[data-theme="dark"] aside a{color:#b6c0d6}
+html[data-theme="dark"] aside a:hover{background:#1e293f}
+html[data-theme="dark"] aside a.on{color:#fff;background:#233150;border-left-color:#60a5fa}
+html[data-theme="dark"] .tile,html[data-theme="dark"] .card{background:#1a2438;border-color:#26314a}
+html[data-theme="dark"] .tile .k{color:#94a0b8}
+html[data-theme="dark"] .tile .v{color:#e8ecf4}
+html[data-theme="dark"] .card h2{color:#cdd5e6;border-color:#26314a}
+html[data-theme="dark"] .empty,html[data-theme="dark"] .hint,html[data-theme="dark"] .pol-hint{color:#6b7794}
+html[data-theme="dark"] td{border-color:#232e46}
+html[data-theme="dark"] td.t,html[data-theme="dark"] td.who span,html[data-theme="dark"] td.reason{color:#94a0b8}
+html[data-theme="dark"] tr.fresh{animation:flashd 1.2s ease-out}
+@keyframes flashd{from{background:#1e3a6b}to{background:transparent}}
+html[data-theme="dark"] .f{background:#1a2438;border-color:#26314a;color:#b6c0d6}
+html[data-theme="dark"] .f:hover{background:#1e293f}
+html[data-theme="dark"] .f.on{background:#3b5bce;border-color:#3b5bce;color:#fff}
+html[data-theme="dark"] .sess-item:hover,html[data-theme="dark"] .app-item:hover,html[data-theme="dark"] .rule-item:hover{background:#1e293f}
+html[data-theme="dark"] .sess-item .who span,html[data-theme="dark"] .app-item .info span{color:#94a0b8}
+html[data-theme="dark"] .sess-item button,html[data-theme="dark"] .app-item button{background:#1a2438;border-color:#3a465f;color:#b6c0d6}
+html[data-theme="dark"] .rule-item{border-color:#232e46}
+html[data-theme="dark"] .pol-user b,html[data-theme="dark"] .rule-item .info b{color:#e8ecf4}
+html[data-theme="dark"] .pol-chip{background:#1a2438;border-color:#3a465f;color:#8a93a6}
+html[data-theme="dark"] .pol-chip.on{background:#123122;border-color:#1e6e46;color:#4ade80}
+html[data-theme="dark"] .pol-chip.inh{background:#12203f;border-color:#2b4a86;color:#7ba9f5}
+html[data-theme="dark"] .app-form,html[data-theme="dark"] .app-form input{border-color:#26314a}
+html[data-theme="dark"] .app-form input{background:#0f1729;color:#e8ecf4}
+html[data-theme="dark"] .slider{background:#3a465f}
+html[data-theme="dark"] .help{background:#2a3650;color:#b6c0d6}
+html[data-theme="dark"] .rule-param{color:#94a0b8}
+html[data-theme="dark"] .b-allow{background:#123122;color:#4ade80;border-color:#1e6e46}
+html[data-theme="dark"] .b-deny{background:#3a1518;color:#f87171;border-color:#7d2a2f}
+html[data-theme="dark"] .b-login{background:#12203f;color:#7ba9f5;border-color:#2b4a86}
+html[data-theme="dark"] .b-fail{background:#3a2c10;color:#fbbf24;border-color:#7a5c1a}
+html[data-theme="dark"] .b-admin{background:#241640;color:#c4a3fb;border-color:#4b3b86}
+html[data-theme="dark"] .b-etc{background:#232e46;color:#94a0b8;border-color:#3a465f}
 </style></head>
 <body>
 <header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="hd">관제 콘솔</span>
@@ -172,7 +222,8 @@ tr.fresh{animation:flash 1.2s ease-out}
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2b4fd8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
     <span>관리자</span>
   </div>
-</div></header>
+</div>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="다크/라이트 전환">🌙</button></header>
 <div class="layout">
   <aside><div class="m-title">서비스 메뉴</div>${menuHtml(page)}</aside>
   <div class="content">
@@ -181,6 +232,9 @@ tr.fresh{animation:flash 1.2s ease-out}
   </div>
 </div>
 <script>
+(function(){var t=localStorage.getItem('ob-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('ob-theme',t);var b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'☀️':'🌙';}
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('theme-btn');if(b)b.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';});
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function badge(e) {
   if (e.type === 'ACCESS' && e.decision === 'ALLOW') return '<span class="badge b-allow">허용</span>';

@@ -50,6 +50,27 @@ h1{font-size:20px;margin-bottom:6px}
 .lock{font-size:11px;color:#c0392b;border:1px solid #f5c1c1;background:#fdecec;border-radius:8px;padding:1px 7px;font-weight:500;vertical-align:2px;margin-left:6px}
 .note{margin-top:32px;font-size:12px;color:#a8b0c2;line-height:1.7}
 .empty{background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:36px;text-align:center;color:#8a93a6;font-size:14px}
+.theme-btn{margin-left:16px;width:34px;height:34px;border-radius:9px;border:1px solid #dfe5ef;background:#fff;font-size:16px;cursor:pointer;flex:none;line-height:1;align-self:center}
+.theme-btn:hover{background:#f5f7fb}
+/* ── 다크 모드 ── */
+html[data-theme="dark"] body{background:#0f1729;color:#e8ecf4}
+html[data-theme="dark"] header{background:#151d30;border-color:#26314a}
+html[data-theme="dark"] .logo{color:#e8ecf4}
+html[data-theme="dark"] .logo b i{color:#6b7794}
+html[data-theme="dark"] .corp .r b{color:#e8ecf4}
+html[data-theme="dark"] .corp .r span{color:#b6c0d6}
+html[data-theme="dark"] header a.out{color:#cdd5e6}
+html[data-theme="dark"] .theme-btn{background:#1a2438;border-color:#26314a}
+html[data-theme="dark"] h1{color:#e8ecf4}
+html[data-theme="dark"] .sub{color:#94a0b8}
+html[data-theme="dark"] .row{background:#1a2438;border-color:#26314a}
+html[data-theme="dark"] .row:hover{border-color:#60a5fa}
+html[data-theme="dark"] .row .d{color:#94a0b8}
+html[data-theme="dark"] .row .go{color:#b6c0d6}
+html[data-theme="dark"] .row.locked:hover{border-color:#f87171}
+html[data-theme="dark"] .lock{background:#3a1518;border-color:#7d2a2f;color:#f87171}
+html[data-theme="dark"] .note{color:#6b7794}
+html[data-theme="dark"] .empty{background:#1a2438;border-color:#26314a;color:#94a0b8}
 </style></head>
 <body>
 <header><span class="logo">Office<b>BR<i>I</i>DGE</b></span>
@@ -63,7 +84,8 @@ h1{font-size:20px;margin-bottom:6px}
     <span>${session.name}</span>
   </div>
 </div>
-<a class="out" href="/_ob/logout">로그아웃</a></header>
+<a class="out" href="/_ob/logout">로그아웃</a>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="다크/라이트 전환">🌙</button></header>
 <main>
   <h1>사내 시스템</h1>
   <div class="sub">🔒 표시된 시스템은 ${session.name}님께 접근 권한이 없습니다. 필요 시 관리자에게 권한을 요청하세요.</div>
@@ -71,6 +93,11 @@ h1{font-size:20px;margin-bottom:6px}
   <div class="note">모든 접속은 OfficeBridge 제로트러스트 게이트웨이를 통해 검증·기록됩니다.<br>
   VPN 연결 없이 안전하게 사내 시스템을 이용하세요.</div>
 </main>
+<script>
+(function(){var t=localStorage.getItem('ob-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('ob-theme',t);var b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'☀️':'🌙';}
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('theme-btn');if(b)b.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';});
+</script>
 </body></html>`;
 }
 
