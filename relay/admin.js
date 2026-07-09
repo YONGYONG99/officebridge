@@ -348,19 +348,26 @@ function rulesPage() {
     <h2>행위 기반 접근제어 룰셋 <span style="font-weight:400;color:#8a93a6">— Continuous Verification</span></h2>
     <div id="rules"><div class="empty">불러오는 중…</div></div>
     <div class="hint">OfficeBridge가 제공·관리하는 룰셋입니다. 인증된 세션이라도 <b>매 요청마다 재검증</b>되며, 위반 시 [시스템 접속로그]에 [행위기반] 차단으로 기록됩니다. 룰 기준은 벤더가 지속 업데이트합니다.</div>
+  </div>
+  <div class="card narrow">
+    <h2>엔드포인트 연동 <span style="font-weight:400;color:#8a93a6">— Device Posture</span></h2>
+    <div id="rules-device"><div class="empty">불러오는 중…</div></div>
+    <div class="hint">엔드포인트 보안 솔루션(OfficeKeeper 등)과 연동해 단말의 보안 상태를 접속 조건으로 검증합니다.</div>
   </div>`;
   const script = `
+function ruleItemHtml(r){
+  return '<div class="rule-item"><div class="info">'
+    +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> <span class="rule-param">'+esc(r.param)+'</span></b>'
+    +'<p>'+esc(r.desc)+'</p></div>'
+    +'<label class="switch"><input type="checkbox" '+(r.enabled?'checked':'')+' onchange="toggleRule(\\''+esc(r.id)+'\\', this.checked)"><span class="slider"></span></label>'
+    +'</div>';
+}
 function loadRules(){
   fetch('/_ob/api/rules').then(function(r){return r.json();}).then(function(list){
-    var html='';
-    list.forEach(function(r){
-      html+='<div class="rule-item"><div class="info">'
-        +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> <span class="rule-param">'+esc(r.param)+'</span></b>'
-        +'<p>'+esc(r.desc)+'</p></div>'
-        +'<label class="switch"><input type="checkbox" '+(r.enabled?'checked':'')+' onchange="toggleRule(\\''+esc(r.id)+'\\', this.checked)"><span class="slider"></span></label>'
-        +'</div>';
-    });
-    document.getElementById('rules').innerHTML = html;
+    var base='', dev='';
+    list.forEach(function(r){ if(r.uiOnly) dev+=ruleItemHtml(r); else base+=ruleItemHtml(r); });
+    document.getElementById('rules').innerHTML = base;
+    document.getElementById('rules-device').innerHTML = dev;
   });
 }
 function toggleRule(id, on){
