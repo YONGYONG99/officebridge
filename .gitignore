@@ -1,0 +1,25 @@
+# 비밀값 — 절대 커밋 금지
+.env
+.env.local
+*.pem
+*.key
+
+# 의존성
+node_modules/
+
+# 빌드 산출물
+dist/
+build/
+
+# 데이터베이스
+*.sqlite
+*.sqlite3
+*.db
+
+# 로그
+*.log
+
+# OS/에디터
+.DS_Store
+.vscode/
+.idea/
