@@ -1,0 +1,13 @@
+{
+  "name": "officebridge-relay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OfficeBridge 릴레이 서버 — 게이트웨이 프록시 + 터널 매니저",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
