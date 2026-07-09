@@ -1,13 +1,14 @@
 {
   "_comment": "passwordHash = SHA-256 hex. 데모 계정 비밀번호는 전부 demo1234. url = 커넥터가 전달할 사내 원본 주소. 사용자 권한 = 부서(depts) 정책 + 개인(users.apps) 추가 권한",
-  "_v": 6,
+  "_v": 7,
   "company": { "name": "AMD" },
   "rules": {
     "office-hours": false,
     "rate-limit": true,
     "ip-pinning": true,
     "login-lockout": true,
-    "session-ttl": false
+    "session-ttl": false,
+    "device-posture": false
   },
   "apps": {
     "erp": { "title": "ERP", "icon": "📊", "desc": "전산시스템 (K-System Ace)", "url": "http://127.0.0.1:8081" },
