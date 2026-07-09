@@ -2,8 +2,9 @@
 // 지금은 데모 계정 선택형 로그인. 추후 Google OAuth로 교체 시 이 파일의
 // 로그인 화면/POST 처리만 OAuth 리다이렉트로 바꾸면 됨 (세션 구조는 그대로).
 const crypto = require('crypto');
-const { getUsers, getDepts, getCompany } = require('./policy');
+const { getUsers, getDepts, getCompany, getRuleFlags } = require('./policy');
 const audit = require('./audit');
+const rules = require('./rules');
 
 // sessionId → { email, name, createdAt }
 const sessions = new Map();
@@ -145,13 +146,25 @@ function handleAuthRoutes(req, res) {
           email, ip: audit.clientIp(req),
           reason: user ? '비밀번호 불일치' : '존재하지 않는 계정',
         });
+        // 행위 룰: 연속 실패 시 계정 자동 잠금 (무차별 대입 방지)
+        if (getRuleFlags()['login-lockout'] && user && rules.recordLoginFail(email)) {
+          blocked.add(email);
+          audit.record({
+            type: 'ACCESS', decision: 'DENY',
+            email, ip: audit.clientIp(req),
+            reason: '[행위기반] 로그인 연속 실패 잠금 — 10분 내 5회 실패로 계정 자동 잠금',
+          });
+          res.writeHead(401, { 'content-type': 'text/html; charset=utf-8' });
+          return res.end(loginPage(next, '연속 실패로 계정이 자동 잠금되었습니다. 관리자에게 문의하세요.'));
+        }
         res.writeHead(401, { 'content-type': 'text/html; charset=utf-8' });
         return res.end(loginPage(next, '이메일 또는 비밀번호가 올바르지 않습니다.'));
       }
+      rules.clearLoginFails(email);
       const deptName = getDepts()[user.dept]?.name;
       const displayName = deptName ? `${user.name} (${deptName})` : user.name;
       const sid = crypto.randomUUID();
-      sessions.set(sid, { email, name: displayName, dept: user.dept, createdAt: Date.now() });
+      sessions.set(sid, { email, name: displayName, dept: user.dept, ip: audit.clientIp(req), createdAt: Date.now() });
       audit.record({
         type: 'LOGIN', decision: 'OK',
         email, name: displayName, ip: audit.clientIp(req), reason: '비밀번호 인증 성공',

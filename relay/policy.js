@@ -54,6 +54,20 @@ function getCompany() {
   return policy.company || { name: '' };
 }
 
+// 행위 기반 룰셋 활성화 상태 (룰 정의는 rules.js — 벤더 제공)
+function getRuleFlags() {
+  return policy.rules || {};
+}
+
+function setRuleFlag(id, enabled) {
+  policy.rules = policy.rules || {};
+  if (!(id in policy.rules)) return false;
+  policy.rules[id] = !!enabled;
+  save();
+  console.log(`[policy] 행위 룰 변경: ${id} → ${enabled ? 'ON' : 'OFF'}`);
+  return true;
+}
+
 function getDepts() {
   return policy.depts || {};
 }
@@ -149,5 +163,6 @@ a{display:inline-block;margin-top:18px;color:#14224e;font-size:13px;font-weight:
 module.exports = {
   getUsers, getDepts, getAppMeta, getCompany,
   isAllowed, allowedAppsOf, setAccess, setDeptAccess, setApp, removeApp,
+  getRuleFlags, setRuleFlag,
   deniedPage,
 };

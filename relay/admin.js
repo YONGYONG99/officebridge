@@ -29,6 +29,7 @@ const MENU = [
   { type: 'sec', label: '정책 설정' },
   { type: 'item', page: '/policy/apps', label: '사내시스템 등록' },
   { type: 'item', page: '/policy/access', label: '정책 접근관리' },
+  { type: 'item', page: '/policy/rules', label: '행위 기반 제어' },
   { type: 'item', page: '/policy/sessions', label: '활성세션 · 계정통제' },
   { type: 'sec', label: '로그 조회' },
   { type: 'item', page: '/logs/system', label: '시스템 접속로그' },
@@ -136,6 +137,20 @@ tr.fresh{animation:flash 1.2s ease-out}
 .app-form button:hover{background:#1d2f66}
 .app-err{grid-column:1/-1;font-size:11px;color:#c0392b;display:none}
 .narrow{max-width:640px}
+.rule-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid #f1f4f9}
+.rule-item:last-child{border-bottom:none}
+.rule-item .info{flex:1;min-width:0}
+.rule-item .info b{font-size:13.5px;display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.rule-item .info p{font-size:12px;color:#8a93a6;line-height:1.6}
+.rule-tag{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:8px;background:#e9effc;color:#2b4fd8;border:1px solid #c5d4f5}
+.rule-tag.red{background:#fdecec;color:#c0392b;border-color:#f5c1c1}
+.rule-param{font-size:11px;color:#8a93a6;font-weight:400}
+.switch{position:relative;width:42px;height:23px;flex:none;margin-top:2px;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#d6dbe6;border-radius:23px;transition:.15s}
+.slider:before{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked+.slider{background:#1e8e5a}
+.switch input:checked+.slider:before{transform:translateX(19px)}
 </style></head>
 <body>
 <header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="hd">관제 콘솔</span>
@@ -326,6 +341,35 @@ setInterval(loadPolicy, 5000);`;
   return { title: '정책 설정 › 정책 접근관리', content, script, sse: false };
 }
 
+// ── 페이지: 행위 기반 제어 (Continuous Verification) ────────
+function rulesPage() {
+  const content = `
+  <div class="card narrow">
+    <h2>행위 기반 접근제어 룰셋 <span style="font-weight:400;color:#8a93a6">— Continuous Verification</span></h2>
+    <div id="rules"><div class="empty">불러오는 중…</div></div>
+    <div class="hint">OfficeBridge가 제공·관리하는 룰셋입니다. 인증된 세션이라도 <b>매 요청마다 재검증</b>되며, 위반 시 [시스템 접속로그]에 [행위기반] 차단으로 기록됩니다. 룰 기준은 벤더가 지속 업데이트합니다.</div>
+  </div>`;
+  const script = `
+function loadRules(){
+  fetch('/_ob/api/rules').then(function(r){return r.json();}).then(function(list){
+    var html='';
+    list.forEach(function(r){
+      html+='<div class="rule-item"><div class="info">'
+        +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> <span class="rule-param">'+esc(r.param)+'</span></b>'
+        +'<p>'+esc(r.desc)+'</p></div>'
+        +'<label class="switch"><input type="checkbox" '+(r.enabled?'checked':'')+' onchange="toggleRule(\\''+esc(r.id)+'\\', this.checked)"><span class="slider"></span></label>'
+        +'</div>';
+    });
+    document.getElementById('rules').innerHTML = html;
+  });
+}
+function toggleRule(id, on){
+  fetch('/_ob/api/rules',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:id,enabled:on})}).then(loadRules);
+}
+loadRules();`;
+  return { title: '정책 설정 › 행위 기반 제어', content, script, sse: false };
+}
+
 // ── 페이지: 활성세션 · 계정통제 ─────────────────────────────
 function sessionsPage() {
   const content = `
@@ -443,6 +487,7 @@ const PAGES = {
   '/dashboard': dashboardPage,
   '/policy/apps': appsPage,
   '/policy/access': accessPage,
+  '/policy/rules': rulesPage,
   '/policy/sessions': sessionsPage,
   '/logs/system': systemLogsPage,
   '/logs/admin': adminLogsPage,

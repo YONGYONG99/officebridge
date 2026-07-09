@@ -10,8 +10,10 @@ const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
 const {
   getUsers, getDepts, getAppMeta, getCompany,
   isAllowed, allowedAppsOf, setAccess, setDeptAccess, setApp, removeApp,
+  getRuleFlags, setRuleFlag,
   deniedPage,
 } = require('./policy');
+const rules = require('./rules');
 const { portalPage } = require('./portal');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
@@ -190,6 +192,33 @@ function handleAdminRoutes(req, res, url) {
     return true;
   }
 
+  // 행위 기반 룰셋 조회 (벤더 정의 + 고객사 활성화 상태)
+  if (p === '/_ob/api/rules' && req.method === 'GET') {
+    const flags = getRuleFlags();
+    const list = rules.RULES.map((r) => ({ ...r, enabled: flags[r.id] ?? r.default }));
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(list));
+    return true;
+  }
+
+  // 행위 기반 룰셋 ON/OFF
+  if (p === '/_ob/api/rules' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const ok = setRuleFlag(body.id, !!body.enabled);
+      if (ok) {
+        const rule = rules.RULES.find((r) => r.id === body.id);
+        audit.record({
+          type: 'ADMIN', decision: 'OK',
+          ip: audit.clientIp(req),
+          reason: `관리자가 행위 기반 룰 ${body.enabled ? '활성화' : '비활성화'} (${rule?.title || body.id})`,
+        });
+      }
+      res.writeHead(ok ? 200 : 400, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ ok }));
+    });
+    return true;
+  }
+
   // 부서(조직) 정책 변경
   if (p === '/_ob/api/dept-policy' && req.method === 'POST') {
     readJsonBody(req, (body) => {
@@ -302,6 +331,25 @@ function handleGatewayRequest(req, res) {
   if (!session) {
     res.writeHead(302, { location: `/_ob/login?next=${encodeURIComponent(req.url)}` });
     return res.end();
+  }
+
+  // 1.2) 행위 기반 지속 검증 (F-4) — 인증된 세션이라도 매 요청 재검증
+  const violation = rules.checkRequest({ session, ip: audit.clientIp(req) }, getRuleFlags());
+  if (violation) {
+    if (!isNoise)
+      audit.record({
+        type: 'ACCESS', decision: 'DENY',
+        email: session.email, name: session.name,
+        service, path: req.url, method: req.method,
+        ip: audit.clientIp(req),
+        reason: `[행위기반] ${violation.title} — ${violation.detail}`,
+      });
+    if (violation.kill) {
+      sessions.delete(session.sid);
+      res.writeHead(302, { location: `/_ob/login?next=${encodeURIComponent(req.url)}` });
+      return res.end();
+    }
+    return sendError(res, 403, violation.title, violation.detail);
   }
 
   // 1.5) 앱 포털 — 로그인한 사용자에게 허가된 앱만 타일로 노출 (SaaS 대표 진입점)
