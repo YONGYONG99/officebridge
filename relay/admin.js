@@ -14,7 +14,7 @@ button{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-
 </div></body></html>`;
 }
 
-function adminPage() {
+function adminPage(company) {
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OfficeBridge 관제 대시보드</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -87,6 +87,7 @@ tr.fresh{animation:flash 1.2s ease-out}
 </style></head>
 <body>
 <header><span>🌉</span><span class="logo">OFFICEBRIDGE 관제 대시보드</span>
+<span style="font-size:13px;font-weight:700;padding:3px 11px;background:#111827;border:1px solid #374151;border-radius:8px;letter-spacing:1px">${company}</span>
 <span class="live"><span class="dot" id="dot"></span><span id="live-label">연결 중…</span></span></header>
 <main>
   <div class="tiles">

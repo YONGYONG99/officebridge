@@ -7,7 +7,7 @@ const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
-const { getUsers, getAppMeta, isAllowed, setAccess, setApp, removeApp, deniedPage } = require('./policy');
+const { getUsers, getAppMeta, getCompany, isAllowed, setAccess, setApp, removeApp, deniedPage } = require('./policy');
 const { portalPage } = require('./portal');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
@@ -81,7 +81,7 @@ function handleAdminRoutes(req, res, url) {
       'content-type': 'text/html; charset=utf-8',
       'set-cookie': `ob_admin=${ADMIN_TOKEN}; Path=/; HttpOnly`,
     });
-    res.end(adminPage());
+    res.end(adminPage(getCompany().name));
     return true;
   }
 
@@ -279,7 +279,7 @@ function handleGatewayRequest(req, res) {
         ip: audit.clientIp(req), reason: '포털 접속',
       });
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-    return res.end(portalPage(session, user ? user.apps : [], getAppMeta(), req.headers.host));
+    return res.end(portalPage(session, user ? user.apps : [], getAppMeta(), req.headers.host, getCompany().name));
   }
 
   // 2) 정책 판정 (F-3) — 허가되지 않은 앱은 차단

@@ -49,6 +49,11 @@ function getAppMeta() {
   return policy.apps || {};
 }
 
+// 테넌트(고객사) 정보 — 실제 제품에선 접속 도메인으로 테넌트 결정
+function getCompany() {
+  return policy.company || { name: '' };
+}
+
 function isAllowed(email, service) {
   const user = policy.users[email];
   return !!user && user.apps.includes(service);
@@ -110,4 +115,4 @@ a{color:#60a5fa;font-size:13px}</style></head>
 </div></body></html>`;
 }
 
-module.exports = { getUsers, getAppMeta, isAllowed, setAccess, setApp, removeApp, deniedPage };
+module.exports = { getUsers, getAppMeta, getCompany, isAllowed, setAccess, setApp, removeApp, deniedPage };

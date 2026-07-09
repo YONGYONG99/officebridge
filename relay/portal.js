@@ -9,7 +9,7 @@ function appUrl(host, app) {
   return `//${parts.join('.')}/`;
 }
 
-function portalPage(session, allowedApps, meta, host) {
+function portalPage(session, allowedApps, meta, host, company) {
   const tiles = Object.entries(meta)
     .map(([app, m]) => {
       const allowed = allowedApps.includes(app);
@@ -27,6 +27,7 @@ function portalPage(session, allowedApps, meta, host) {
 body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#111827;color:#f9fafb;min-height:100vh}
 header{display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #1f2937}
 header .logo{font-size:14px;letter-spacing:2px;color:#60a5fa;font-weight:700}
+header .co{font-size:13px;font-weight:700;padding:4px 12px;background:#1f2937;border:1px solid #374151;border-radius:8px;letter-spacing:1px}
 header .me{margin-left:auto;font-size:13px;color:#9ca3af}
 header a{color:#60a5fa;font-size:13px;text-decoration:none;margin-left:14px}
 main{max-width:820px;margin:0 auto;padding:48px 20px}
@@ -45,10 +46,10 @@ h1{font-size:22px;margin-bottom:6px}
 .empty{background:#1f2937;border-radius:14px;padding:36px;text-align:center;color:#9ca3af;font-size:14px}
 </style></head>
 <body>
-<header><span>🌉</span><span class="logo">OFFICEBRIDGE</span>
+<header><span>🌉</span><span class="logo">OFFICEBRIDGE</span><span class="co">${company}</span>
 <span class="me">${session.name}</span><a href="/_ob/logout">로그아웃</a></header>
 <main>
-  <h1>사내 시스템</h1>
+  <h1>${company} 사내 시스템</h1>
   <div class="sub">🔒 표시된 시스템은 ${session.name}님께 접근 권한이 없습니다. 필요 시 관리자에게 권한을 요청하세요.</div>
   ${tiles || '<div class="empty">등록된 사내 시스템이 없습니다.</div>'}
   <div class="note">🔒 모든 접속은 OfficeBridge 제로트러스트 게이트웨이를 통해 검증·기록됩니다.<br>

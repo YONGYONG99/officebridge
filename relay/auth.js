@@ -2,7 +2,7 @@
 // 지금은 데모 계정 선택형 로그인. 추후 Google OAuth로 교체 시 이 파일의
 // 로그인 화면/POST 처리만 OAuth 리다이렉트로 바꾸면 됨 (세션 구조는 그대로).
 const crypto = require('crypto');
-const { getUsers } = require('./policy');
+const { getUsers, getCompany } = require('./policy');
 const audit = require('./audit');
 
 // sessionId → { email, name, createdAt }
@@ -37,6 +37,7 @@ function cookieDomainAttr(host) {
 }
 
 function loginPage(next, errorMsg) {
+  const company = getCompany().name;
   const users = getUsers();
   const accountChips = Object.entries(users)
     .map(
@@ -62,11 +63,14 @@ function loginPage(next, errorMsg) {
   .chip{font-size:12px;padding:5px 10px;background:#374151;border-radius:14px;color:#d1d5db;cursor:pointer}
   .chip:hover{background:#4b5563}
   .note{font-size:11px;color:#6b7280;text-align:center;margin-top:12px;line-height:1.5}
+  .company{text-align:center;margin-bottom:16px}
+  .company b{display:inline-block;font-size:15px;padding:6px 16px;background:#111827;border:1px solid #374151;border-radius:10px;letter-spacing:1px}
 </style></head>
 <body><div class="card">
   <div class="logo">🌉 OFFICEBRIDGE</div>
+  <div class="company"><b>${company}</b></div>
   <h1>사내 시스템 접속</h1>
-  <div class="sub">본인 확인 후 인가된 시스템만 이용할 수 있습니다</div>
+  <div class="sub">${company} 임직원 본인 확인 후 인가된 시스템만 이용할 수 있습니다</div>
   <form method="POST" action="/_ob/login">
     <input type="hidden" name="next" value="${next}">
     <label>회사 이메일</label>

@@ -102,7 +102,7 @@ function page(app) {
 </style>
 </head>
 <body>
-<header><span>${app.icon}</span><h1>${app.name}</h1><span class="tag">사내망 전용 시스템 · :${app.port}</span></header>
+<header><span>${app.icon}</span><h1>AMD ${app.name}</h1><span class="tag">AMD 사내망 전용 시스템 · :${app.port}</span></header>
 <main>${app.body}</main>
 </body>
 </html>`;
