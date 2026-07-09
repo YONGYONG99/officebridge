@@ -5,6 +5,14 @@ const fs = require('fs');
 const path = require('path');
 
 const POLICY_PATH = path.join(__dirname, 'policy.json');
+const DEFAULT_PATH = path.join(__dirname, 'policy.default.json');
+
+// 런타임 정책 파일이 없으면 기본 정책에서 생성
+// (policy.json은 대시보드가 수정하므로 git 추적 제외 — pull 충돌 방지)
+if (!fs.existsSync(POLICY_PATH)) {
+  fs.copyFileSync(DEFAULT_PATH, POLICY_PATH);
+  console.log('[policy] policy.default.json → policy.json 생성');
+}
 
 let policy = { users: {} };
 function loadPolicy() {
