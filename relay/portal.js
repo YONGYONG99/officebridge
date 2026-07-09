@@ -1,6 +1,6 @@
 // 앱 포털 (SaaS 대표 진입점)
-// portal.<도메인> 접속 → 로그인 → 이 사용자에게 허가된 앱만 타일로 표시.
-// 권한 없는 앱은 목록에조차 나타나지 않는다 (제로트러스트: 최소 노출).
+// portal.<도메인> 접속 → 로그인 → 회사의 전체 사내 시스템을 타일로 표시.
+// 권한 없는 앱은 🔒 잠금 표시 — 클릭해도 게이트웨이가 403으로 차단한다.
 
 // host: "portal.10.52.249.249.sslip.io:443" → 앱 링크는 첫 라벨만 교체
 function appUrl(host, app) {
@@ -9,13 +9,13 @@ function appUrl(host, app) {
   return `//${parts.join('.')}/`;
 }
 
-function portalPage(session, apps, meta, host) {
-  const tiles = apps
-    .map((app) => {
-      const m = meta[app] || { title: app, icon: '🗂️', desc: '' };
-      return `<a class="tile" href="${appUrl(host, app)}">
+function portalPage(session, allowedApps, meta, host) {
+  const tiles = Object.entries(meta)
+    .map(([app, m]) => {
+      const allowed = allowedApps.includes(app);
+      return `<a class="tile${allowed ? '' : ' locked'}" href="${appUrl(host, app)}">
         <div class="icon">${m.icon}</div>
-        <div class="t">${m.title}</div>
+        <div class="t">${m.title}${allowed ? '' : ' <span class="lock">🔒 권한 없음</span>'}</div>
         <div class="d">${m.desc}</div>
       </a>`;
     })
@@ -38,6 +38,9 @@ h1{font-size:22px;margin-bottom:6px}
 .tile .icon{font-size:30px;margin-bottom:12px}
 .tile .t{font-size:16px;font-weight:600;margin-bottom:4px}
 .tile .d{font-size:12.5px;color:#9ca3af;line-height:1.5}
+.tile.locked{opacity:.55}
+.tile.locked:hover{border-color:#f87171;opacity:.75}
+.lock{font-size:11px;color:#f87171;border:1px solid #f8717166;border-radius:8px;padding:1px 7px;font-weight:500;vertical-align:2px}
 .note{margin-top:36px;font-size:12px;color:#6b7280;line-height:1.7}
 .empty{background:#1f2937;border-radius:14px;padding:36px;text-align:center;color:#9ca3af;font-size:14px}
 </style></head>
@@ -46,8 +49,8 @@ h1{font-size:22px;margin-bottom:6px}
 <span class="me">${session.name}</span><a href="/_ob/logout">로그아웃</a></header>
 <main>
   <h1>사내 시스템</h1>
-  <div class="sub">${session.name}님께 허가된 시스템 목록입니다. 표시되지 않는 시스템은 접근 권한이 없는 것입니다.</div>
-  ${tiles || '<div class="empty">허가된 시스템이 없습니다.<br>관리자에게 권한을 요청하세요.</div>'}
+  <div class="sub">🔒 표시된 시스템은 ${session.name}님께 접근 권한이 없습니다. 필요 시 관리자에게 권한을 요청하세요.</div>
+  ${tiles || '<div class="empty">등록된 사내 시스템이 없습니다.</div>'}
   <div class="note">🔒 모든 접속은 OfficeBridge 제로트러스트 게이트웨이를 통해 검증·기록됩니다.<br>
   VPN 연결 없이 안전하게 사내 시스템을 이용하세요.</div>
 </main>
