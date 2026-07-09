@@ -145,6 +145,9 @@ tr.fresh{animation:flash 1.2s ease-out}
 .rule-tag{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:8px;background:#e9effc;color:#2b4fd8;border:1px solid #c5d4f5}
 .rule-tag.red{background:#fdecec;color:#c0392b;border-color:#f5c1c1}
 .rule-param{font-size:11px;color:#8a93a6;font-weight:400}
+.ok-logo{display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
+.ok-logo svg{display:block}
+.ok-logo b{font-size:12px;font-weight:800;color:#1a3fa8;letter-spacing:-.3px}
 .switch{position:relative;width:42px;height:23px;flex:none;margin-top:2px;cursor:pointer}
 .switch input{opacity:0;width:0;height:0}
 .slider{position:absolute;inset:0;background:#d6dbe6;border-radius:23px;transition:.15s}
@@ -355,9 +358,11 @@ function rulesPage() {
     <div class="hint">엔드포인트 보안 솔루션(OfficeKeeper 등)과 연동해 단말의 보안 상태를 접속 조건으로 검증합니다.</div>
   </div>`;
   const script = `
+var OK_LOGO='<span class="ok-logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#1a3fa8" stroke-width="2.4"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#1a3fa8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b>OfficeKeeper</b></span>';
 function ruleItemHtml(r){
+  var mid = r.vendor==='officekeeper' ? OK_LOGO+' ' : '';
   return '<div class="rule-item"><div class="info">'
-    +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> <span class="rule-param">'+esc(r.param)+'</span></b>'
+    +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> '+mid+'<span class="rule-param">'+esc(r.param)+'</span></b>'
     +'<p>'+esc(r.desc)+'</p></div>'
     +'<label class="switch"><input type="checkbox" '+(r.enabled?'checked':'')+' onchange="toggleRule(\\''+esc(r.id)+'\\', this.checked)"><span class="slider"></span></label>'
     +'</div>';

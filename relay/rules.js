@@ -50,6 +50,7 @@ const RULES = [
     action: '차단',
     default: false,
     uiOnly: true, // UI 노출만 — 서버 검증 미구현(엔드포인트 연동 예정)
+    vendor: 'officekeeper', // 파라미터 앞에 벤더 로고 표시
   },
 ];
 
