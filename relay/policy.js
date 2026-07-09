@@ -25,6 +25,10 @@ function getUsers() {
   return policy.users;
 }
 
+function getAppMeta() {
+  return policy.apps || {};
+}
+
 function isAllowed(email, service) {
   const user = policy.users[email];
   return !!user && user.apps.includes(service);
@@ -62,4 +66,4 @@ a{color:#60a5fa;font-size:13px}</style></head>
 </div></body></html>`;
 }
 
-module.exports = { getUsers, isAllowed, setAccess, deniedPage };
+module.exports = { getUsers, getAppMeta, isAllowed, setAccess, deniedPage };

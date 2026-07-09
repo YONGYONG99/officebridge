@@ -41,7 +41,9 @@ cd /data/hackertone-amd && git pull && ./start.sh
 start.sh가 기존 프로세스 정리 → 목업/릴레이/커넥터 재시작 → 자가진단(✅ 4항목)까지 수행한다.
 **git pull 후에는 반드시 ./start.sh** (재시작 없이는 옛 코드가 계속 돈다).
 
-- 사용자 접속: `http://groupware.10.52.249.249.sslip.io:443` (wiki / hrdb 동일 패턴)
+- **대표 진입점(포털): `http://portal.10.52.249.249.sslip.io:443`** — 로그인 후 허가된 앱만 타일로 표시
+- 개별 서비스 직접 접속도 가능: `http://groupware.10.52.249.249.sslip.io:443` (wiki / hrdb 동일 패턴)
+- 관제 대시보드: `http://portal.10.52.249.249.sslip.io:443/_ob/admin` (토큰 `admin-token`)
 - 감사 로그 실시간: `tail -f /data/hackertone-amd/relay/audit.log`
 - 감사 로그 API: `curl "http://localhost:443/_ob/api/logs?token=admin-token"`
 

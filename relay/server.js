@@ -7,7 +7,8 @@ const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
-const { getUsers, isAllowed, setAccess, deniedPage } = require('./policy');
+const { getUsers, getAppMeta, isAllowed, setAccess, deniedPage } = require('./policy');
+const { portalPage } = require('./portal');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
 
@@ -212,6 +213,20 @@ function handleGatewayRequest(req, res) {
   if (!session) {
     res.writeHead(302, { location: `/_ob/login?next=${encodeURIComponent(req.url)}` });
     return res.end();
+  }
+
+  // 1.5) 앱 포털 — 로그인한 사용자에게 허가된 앱만 타일로 노출 (SaaS 대표 진입점)
+  if (service === 'portal') {
+    const user = getUsers()[session.email];
+    if (!isNoise)
+      audit.record({
+        type: 'ACCESS', decision: 'ALLOW',
+        email: session.email, name: session.name,
+        service: 'portal', path: req.url, method: req.method,
+        ip: audit.clientIp(req), reason: '포털 접속',
+      });
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    return res.end(portalPage(session, user ? user.apps : [], getAppMeta(), req.headers.host));
   }
 
   // 2) 정책 판정 (F-3) — 허가되지 않은 앱은 차단
