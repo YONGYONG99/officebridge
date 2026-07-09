@@ -7,7 +7,7 @@ const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
-const { getUsers, getAppMeta, isAllowed, setAccess, deniedPage } = require('./policy');
+const { getUsers, getAppMeta, isAllowed, setAccess, setApp, removeApp, deniedPage } = require('./policy');
 const { portalPage } = require('./portal');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
@@ -18,8 +18,10 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin-token';
 const REQUEST_TIMEOUT_MS = 15000;
 
 // ── 터널 상태 ──────────────────────────────────────────────
-// serviceName → { ws, connectorId, connectedAt }
-const tunnels = new Map();
+// 연결된 커넥터들 (단일 테넌트 MVP: 아무 커넥터나 사용)
+// 앱→내부주소 매핑은 릴레이(policy.json의 apps[].url)가 관리하고,
+// 매 요청에 목적지(target)를 실어 보낸다 → 대시보드 등록 즉시 반영, 커넥터 재시작 불필요
+const connectors = new Set();
 // requestId → { res, timer }  (터널 응답 대기 중인 사용자 요청)
 const pending = new Map();
 
@@ -107,13 +109,64 @@ function handleAdminRoutes(req, res, url) {
     return true;
   }
 
+  // 사내 시스템 목록 조회
+  if (p === '/_ob/api/apps' && req.method === 'GET') {
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(getAppMeta()));
+    return true;
+  }
+
+  // 사내 시스템 등록 (라벨 + 원본 내부 주소 → 포털·라우팅에 즉시 반영)
+  if (p === '/_ob/api/apps' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const label = (body.label || '').trim().toLowerCase();
+      const url = (body.url || '').trim();
+      const valid =
+        /^[a-z0-9-]{2,20}$/.test(label) &&
+        !['portal', 'admin', 'www'].includes(label) &&
+        /^https?:\/\/.+/.test(url);
+      if (!valid) {
+        res.writeHead(400, { 'content-type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ ok: false, error: '라벨(영문 소문자·숫자·하이픈 2~20자, portal/admin 제외)과 URL(http://...)을 확인하세요.' }));
+      }
+      setApp(label, {
+        title: (body.title || '').trim() || label,
+        icon: (body.icon || '').trim() || '🗂️',
+        desc: (body.desc || '').trim() || '',
+        url,
+      });
+      audit.record({
+        type: 'ADMIN', decision: 'OK', service: label,
+        ip: audit.clientIp(req), reason: `관리자가 사내 시스템 등록 (${label} → ${url})`,
+      });
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"ok":true}');
+    });
+    return true;
+  }
+
+  // 사내 시스템 삭제
+  if (p === '/_ob/api/apps/delete' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const ok = removeApp((body.label || '').trim());
+      if (ok)
+        audit.record({
+          type: 'ADMIN', decision: 'OK', service: body.label,
+          ip: audit.clientIp(req), reason: `관리자가 사내 시스템 삭제 (${body.label})`,
+        });
+      res.writeHead(ok ? 200 : 400, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ ok }));
+    });
+    return true;
+  }
+
   // 접근 정책 조회 (사용자별 허용 앱 + 전체 서비스 목록)
   if (p === '/_ob/api/policy' && req.method === 'GET') {
     const users = {};
     for (const [email, u] of Object.entries(getUsers())) {
       users[email] = { name: u.name, apps: u.apps }; // passwordHash 노출 금지
     }
-    const services = new Set([...tunnels.keys()]);
+    const services = new Set(Object.keys(getAppMeta()));
     for (const u of Object.values(users)) u.apps.forEach((a) => services.add(a));
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({ users, services: [...services].sort() }));
@@ -249,9 +302,13 @@ function handleGatewayRequest(req, res) {
       ip: audit.clientIp(req), reason: '정적 정책 일치',
     });
 
-  // 3) 터널 전달 (F-1)
-  const tunnel = tunnels.get(service);
-  if (!tunnel) {
+  // 3) 터널 전달 (F-1) — 릴레이가 관리하는 매핑에서 내부 주소를 찾아 실어 보냄
+  const app = getAppMeta()[service];
+  if (!app || !app.url) {
+    return sendError(res, 404, '등록되지 않은 서비스', '관리자 대시보드에서 사내 시스템을 먼저 등록하세요.');
+  }
+  const connector = connectors.values().next().value;
+  if (!connector) {
     audit.record({
       type: 'SYSTEM', decision: 'FAIL',
       email: session.email, name: session.name,
@@ -259,7 +316,7 @@ function handleGatewayRequest(req, res) {
       reason: '커넥터 터널 미연결 (503)',
     });
     return sendError(res, 503, '연결할 수 없는 서비스입니다',
-      `"${service}" 서비스의 커넥터가 현재 릴레이에 연결되어 있지 않습니다.`);
+      '고객사 커넥터가 현재 릴레이에 연결되어 있지 않습니다.');
   }
 
   const id = crypto.randomUUID();
@@ -275,18 +332,19 @@ function handleGatewayRequest(req, res) {
     }, REQUEST_TIMEOUT_MS);
 
     pending.set(id, { res, timer });
-    tunnel.ws.send(
+    connector.send(
       JSON.stringify({
         type: 'request',
         id,
         service,
+        target: app.url,
         method: req.method,
         path: req.url,
         headers,
         body: Buffer.concat(chunks).toString('base64'),
       })
     );
-    console.log(`[gateway] ${req.method} ${service}${req.url} → 터널 전달 (${id.slice(0, 8)})`);
+    console.log(`[gateway] ${req.method} ${service}${req.url} → 터널 전달 (${app.url})`);
   });
 }
 
@@ -307,8 +365,8 @@ server.on('upgrade', (req, socket, head) => {
 
 wss.on('connection', (ws) => {
   const connectorId = crypto.randomUUID().slice(0, 8);
-  let registered = [];
-  console.log(`[tunnel] 커넥터 연결됨 (${connectorId})`);
+  connectors.add(ws);
+  console.log(`[tunnel] 커넥터 연결됨 (${connectorId}) — 활성 커넥터 ${connectors.size}개`);
 
   ws.on('message', (data) => {
     let msg;
@@ -319,11 +377,7 @@ wss.on('connection', (ws) => {
     }
 
     if (msg.type === 'register') {
-      registered = msg.services || [];
-      for (const name of registered) {
-        tunnels.set(name, { ws, connectorId, connectedAt: Date.now() });
-      }
-      console.log(`[tunnel] 서비스 등록 (${connectorId}): ${registered.join(', ')}`);
+      console.log(`[tunnel] 커넥터 등록 확인 (${connectorId})`);
       return;
     }
 
@@ -347,10 +401,8 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    for (const name of registered) {
-      if (tunnels.get(name)?.ws === ws) tunnels.delete(name);
-    }
-    console.log(`[tunnel] 커넥터 연결 끊김 (${connectorId}) — 서비스 해제: ${registered.join(', ')}`);
+    connectors.delete(ws);
+    console.log(`[tunnel] 커넥터 연결 끊김 (${connectorId}) — 활성 커넥터 ${connectors.size}개`);
   });
 });
 

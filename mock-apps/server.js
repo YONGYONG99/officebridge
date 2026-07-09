@@ -41,6 +41,22 @@ const APPS = [
       </ul>`,
   },
   {
+    // 데모용 "미등록" 시스템 — 대시보드에서 라이브로 등록하는 시연에 사용 (label 예: acct)
+    port: 8084,
+    name: '회계관리',
+    color: '#7c3aed',
+    icon: '💰',
+    body: `
+      <h2>📊 월별 지출 현황</h2>
+      <table>
+        <tr><th>월</th><th>지출 총액</th><th>결재 건수</th><th>상태</th></tr>
+        <tr><td>2026-05</td><td>84,200,000원</td><td>127건</td><td><span class="badge done">마감</span></td></tr>
+        <tr><td>2026-06</td><td>91,750,000원</td><td>143건</td><td><span class="badge done">마감</span></td></tr>
+        <tr><td>2026-07</td><td>38,410,000원</td><td>61건</td><td><span class="badge wait">진행중</span></td></tr>
+      </table>
+      <p><small>* 데모용 가짜 데이터입니다. 이 시스템은 초기 상태에서 OfficeBridge에 미등록 — 대시보드 등록 시연용.</small></p>`,
+  },
+  {
     port: 8083,
     name: '인사DB',
     color: '#dc2626',

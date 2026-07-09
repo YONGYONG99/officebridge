@@ -7,11 +7,23 @@ const path = require('path');
 const POLICY_PATH = path.join(__dirname, 'policy.json');
 const DEFAULT_PATH = path.join(__dirname, 'policy.default.json');
 
-// 런타임 정책 파일이 없으면 기본 정책에서 생성
+// 런타임 정책 파일이 없거나 스키마 버전(_v)이 낮으면 기본 정책에서 (재)생성
 // (policy.json은 대시보드가 수정하므로 git 추적 제외 — pull 충돌 방지)
-if (!fs.existsSync(POLICY_PATH)) {
-  fs.copyFileSync(DEFAULT_PATH, POLICY_PATH);
-  console.log('[policy] policy.default.json → policy.json 생성');
+{
+  const defV = JSON.parse(fs.readFileSync(DEFAULT_PATH, 'utf-8'))._v || 0;
+  let needCopy = !fs.existsSync(POLICY_PATH);
+  if (!needCopy) {
+    try {
+      const curV = JSON.parse(fs.readFileSync(POLICY_PATH, 'utf-8'))._v || 0;
+      needCopy = curV < defV;
+    } catch {
+      needCopy = true;
+    }
+  }
+  if (needCopy) {
+    fs.copyFileSync(DEFAULT_PATH, POLICY_PATH);
+    console.log('[policy] policy.default.json → policy.json 생성 (신규 또는 스키마 변경)');
+  }
 }
 
 let policy = { users: {} };
@@ -42,6 +54,10 @@ function isAllowed(email, service) {
   return !!user && user.apps.includes(service);
 }
 
+function save() {
+  fs.writeFileSync(POLICY_PATH, JSON.stringify(policy, null, 2));
+}
+
 // 관리자 대시보드에서 권한 부여/회수 → policy.json에 즉시 저장
 function setAccess(email, app, allow) {
   const user = policy.users[email];
@@ -49,8 +65,28 @@ function setAccess(email, app, allow) {
   const has = user.apps.includes(app);
   if (allow && !has) user.apps.push(app);
   if (!allow && has) user.apps = user.apps.filter((a) => a !== app);
-  fs.writeFileSync(POLICY_PATH, JSON.stringify(policy, null, 2));
+  save();
   console.log(`[policy] 변경: ${email} ${app} → ${allow ? '허용' : '회수'}`);
+  return true;
+}
+
+// 사내 시스템 등록/수정 (관리자 대시보드에서)
+function setApp(label, meta) {
+  policy.apps = policy.apps || {};
+  policy.apps[label] = meta;
+  save();
+  console.log(`[policy] 시스템 등록: ${label} → ${meta.url}`);
+}
+
+// 사내 시스템 삭제 (전 사용자 권한에서도 제거)
+function removeApp(label) {
+  if (!policy.apps?.[label]) return false;
+  delete policy.apps[label];
+  for (const u of Object.values(policy.users)) {
+    u.apps = u.apps.filter((a) => a !== label);
+  }
+  save();
+  console.log(`[policy] 시스템 삭제: ${label}`);
   return true;
 }
 
@@ -74,4 +110,4 @@ a{color:#60a5fa;font-size:13px}</style></head>
 </div></body></html>`;
 }
 
-module.exports = { getUsers, getAppMeta, isAllowed, setAccess, deniedPage };
+module.exports = { getUsers, getAppMeta, isAllowed, setAccess, setApp, removeApp, deniedPage };

@@ -54,6 +54,22 @@ main{max-width:1200px;margin:20px auto;padding:0 16px}
 .pol-chip.on{border-color:#34d39988;color:#34d399;background:#34d39914}
 .pol-chip:hover{filter:brightness(1.25)}
 .pol-hint{font-size:10.5px;color:#6b7280;padding:4px 10px 6px}
+.apps{padding:8px}
+.app-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px}
+.app-item:hover{background:#374151}
+.app-item .ic{font-size:18px}
+.app-item .info{flex:1;min-width:0}
+.app-item .info b{font-size:13px;display:block}
+.app-item .info span{font-size:11px;color:#9ca3af;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-item button{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid #4b5563;background:#111827;color:#f9fafb;cursor:pointer}
+.app-item button:hover{border-color:#f87171;color:#f87171}
+.app-form{padding:10px 12px;border-top:1px solid #374151;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.app-form input{padding:8px 10px;background:#111827;border:1px solid #4b5563;border-radius:8px;color:#f9fafb;font-size:12px}
+.app-form input:focus{outline:none;border-color:#60a5fa}
+.app-form .full{grid-column:1/-1}
+.app-form button{grid-column:1/-1;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.app-form button:hover{background:#1d4ed8}
+.app-err{grid-column:1/-1;font-size:11px;color:#f87171;display:none}
 #log{max-height:640px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 td{padding:7px 10px;border-bottom:1px solid #27303f;vertical-align:top}
@@ -89,6 +105,17 @@ tr.fresh{animation:flash 1.2s ease-out}
         <h2>접근 정책 관리</h2>
         <div class="pol" id="pol"><div class="empty">불러오는 중…</div></div>
         <div class="pol-hint">칩 클릭 = 권한 부여/회수 · 즉시 반영 (재로그인 불필요)</div>
+      </div>
+      <div class="card">
+        <h2>사내 시스템 등록</h2>
+        <div class="apps" id="apps"><div class="empty">불러오는 중…</div></div>
+        <form class="app-form" onsubmit="return addApp(event)">
+          <input id="a-label" placeholder="라벨 (영문: acct)" required pattern="[a-z0-9-]{2,20}">
+          <input id="a-title" placeholder="이름 (회계관리)" required>
+          <input id="a-url" class="full" placeholder="원본 내부 주소 (http://127.0.0.1:8084)" required>
+          <div class="app-err" id="a-err"></div>
+          <button>+ 시스템 등록 (포털에 즉시 반영)</button>
+        </form>
       </div>
     </div>
     <div class="card">
@@ -203,6 +230,41 @@ function setPolicy(email, app, allow) {
 }
 loadPolicy();
 setInterval(loadPolicy, 5000);
+
+// 사내 시스템 등록/삭제
+function loadApps() {
+  fetch('/_ob/api/apps').then(function(r){return r.json();}).then(function(apps){
+    var html = '';
+    Object.keys(apps).forEach(function(label){
+      var a = apps[label];
+      html += '<div class="app-item"><span class="ic">'+esc(a.icon||'🗂️')+'</span>'
+        + '<div class="info"><b>'+esc(a.title)+' <span style="display:inline;color:#6b7280;font-weight:400">('+esc(label)+')</span></b>'
+        + '<span>'+esc(a.url||'')+'</span></div>'
+        + '<button onclick="delApp(\\''+esc(label)+'\\')">삭제</button></div>';
+    });
+    document.getElementById('apps').innerHTML = html || '<div class="empty">등록된 시스템 없음</div>';
+  });
+}
+function addApp(ev) {
+  ev.preventDefault();
+  var err = document.getElementById('a-err');
+  err.style.display = 'none';
+  fetch('/_ob/api/apps', {method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({label:document.getElementById('a-label').value, title:document.getElementById('a-title').value, url:document.getElementById('a-url').value})})
+    .then(function(r){return r.json();}).then(function(d){
+      if (!d.ok) { err.textContent = d.error || '등록 실패'; err.style.display = 'block'; return; }
+      document.getElementById('a-label').value=''; document.getElementById('a-title').value=''; document.getElementById('a-url').value='';
+      loadApps(); loadPolicy();
+    });
+  return false;
+}
+function delApp(label) {
+  if (!confirm('"'+label+'" 시스템을 삭제할까요? 모든 사용자의 접근 권한도 함께 제거됩니다.')) return;
+  fetch('/_ob/api/apps/delete', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({label:label})})
+    .then(function(){ loadApps(); loadPolicy(); });
+}
+loadApps();
+setInterval(loadApps, 5000);
 </script>
 </body></html>`;
 }

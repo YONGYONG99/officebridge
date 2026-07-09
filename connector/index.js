@@ -1,8 +1,8 @@
 // OfficeBridge 커넥터 에이전트
 // 고객사 사내망에서 실행. 릴레이로 아웃바운드 WSS 연결을 걸어 유지하고(방화벽 인바운드 개방 불필요),
 // 터널로 내려온 HTTP 요청을 사내 시스템에 전달한 뒤 응답을 되돌려 보낸다.
+// 앱→내부주소 매핑은 릴레이(관제)가 관리하며 매 요청에 target으로 내려온다 — 커넥터엔 설정 파일 불필요.
 const WebSocket = require('ws');
-const services = require('./services.json');
 
 const RELAY_URL = process.env.RELAY_URL || 'ws://localhost:8080/tunnel';
 const TOKEN = process.env.CONNECTOR_TOKEN || 'dev-token';
@@ -12,16 +12,15 @@ const RECONNECT_MS = 3000;
 const STRIP_REQ_HEADERS = ['host', 'connection', 'upgrade', 'keep-alive', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding'];
 
 async function handleRequest(ws, msg) {
-  const base = services[msg.service];
-  if (!base) {
-    return sendResponse(ws, msg.id, 502, `등록되지 않은 서비스: ${msg.service}`);
+  if (!msg.target) {
+    return sendResponse(ws, msg.id, 502, `목적지 없는 요청: ${msg.service}`);
   }
 
   const headers = { ...msg.headers };
   for (const h of STRIP_REQ_HEADERS) delete headers[h];
 
   try {
-    const resp = await fetch(base + msg.path, {
+    const resp = await fetch(msg.target + msg.path, {
       method: msg.method,
       headers,
       body: ['GET', 'HEAD'].includes(msg.method) ? undefined : Buffer.from(msg.body || '', 'base64'),
@@ -57,8 +56,8 @@ function connect() {
   const ws = new WebSocket(`${RELAY_URL}?token=${encodeURIComponent(TOKEN)}`);
 
   ws.on('open', () => {
-    ws.send(JSON.stringify({ type: 'register', services: Object.keys(services) }));
-    console.log(`[connector] ✅ 터널 수립 완료 — 서비스: ${Object.keys(services).join(', ')}`);
+    ws.send(JSON.stringify({ type: 'register' }));
+    console.log('[connector] ✅ 터널 수립 완료 — 릴레이의 라우팅 지시 대기');
     console.log('[connector]    (아웃바운드 연결이므로 방화벽 인바운드 개방 없음)');
   });
 

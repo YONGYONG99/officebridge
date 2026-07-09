@@ -1,9 +1,10 @@
 {
-  "_comment": "passwordHash = SHA-256 hex. 데모 계정 비밀번호는 전부 demo1234",
+  "_comment": "passwordHash = SHA-256 hex. 데모 계정 비밀번호는 전부 demo1234. url = 커넥터가 전달할 사내 원본 주소",
+  "_v": 2,
   "apps": {
-    "groupware": { "title": "그룹웨어", "icon": "🏢", "desc": "전자결재 · 공지 · 일정" },
-    "wiki": { "title": "사내 위키", "icon": "📚", "desc": "업무 문서 · 온보딩 가이드" },
-    "hrdb": { "title": "인사DB", "icon": "🔒", "desc": "임직원 인사정보 (민감 시스템)" }
+    "groupware": { "title": "그룹웨어", "icon": "🏢", "desc": "전자결재 · 공지 · 일정", "url": "http://127.0.0.1:8081" },
+    "wiki": { "title": "사내 위키", "icon": "📚", "desc": "업무 문서 · 온보딩 가이드", "url": "http://127.0.0.1:8082" },
+    "hrdb": { "title": "인사DB", "icon": "🔒", "desc": "임직원 인사정보 (민감 시스템)", "url": "http://127.0.0.1:8083" }
   },
   "users": {
     "kim.sales@demo.co.kr": {
