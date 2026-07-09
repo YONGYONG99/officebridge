@@ -7,7 +7,7 @@ const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
-const { isAllowed, deniedPage } = require('./policy');
+const { getUsers, isAllowed, setAccess, deniedPage } = require('./policy');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
 
@@ -102,6 +102,36 @@ function handleAdminRoutes(req, res, url) {
     req.on('close', () => {
       unsubscribe();
       clearInterval(heartbeat);
+    });
+    return true;
+  }
+
+  // 접근 정책 조회 (사용자별 허용 앱 + 전체 서비스 목록)
+  if (p === '/_ob/api/policy' && req.method === 'GET') {
+    const users = {};
+    for (const [email, u] of Object.entries(getUsers())) {
+      users[email] = { name: u.name, apps: u.apps }; // passwordHash 노출 금지
+    }
+    const services = new Set([...tunnels.keys()]);
+    for (const u of Object.values(users)) u.apps.forEach((a) => services.add(a));
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ users, services: [...services].sort() }));
+    return true;
+  }
+
+  // 접근 정책 변경 (권한 부여/회수 → policy.json 저장, 즉시 반영)
+  if (p === '/_ob/api/policy' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const { email, app, allow } = body;
+      const ok = setAccess(email, app, !!allow);
+      if (ok)
+        audit.record({
+          type: 'ADMIN', decision: 'OK', email, service: app,
+          ip: audit.clientIp(req),
+          reason: `관리자가 접근 권한 ${allow ? '부여' : '회수'} (${app})`,
+        });
+      res.writeHead(ok ? 200 : 400, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ ok }));
     });
     return true;
   }

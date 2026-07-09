@@ -45,6 +45,15 @@ main{max-width:1200px;margin:20px auto;padding:0 16px}
 .sess-item button.unblock:hover{border-color:#34d399;color:#34d399}
 .empty{padding:18px;font-size:12px;color:#6b7280;text-align:center}
 .blocked-tag{font-size:10px;color:#f87171;border:1px solid #f87171;border-radius:6px;padding:1px 6px}
+.left-col{display:flex;flex-direction:column;gap:12px}
+.pol{padding:10px}
+.pol-user{padding:8px 10px}
+.pol-user b{font-size:13px;display:block;margin-bottom:6px}
+.pol-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pol-chip{font-size:11.5px;padding:4px 11px;border-radius:14px;cursor:pointer;border:1px solid #4b5563;color:#6b7280;background:#111827;user-select:none}
+.pol-chip.on{border-color:#34d39988;color:#34d399;background:#34d39914}
+.pol-chip:hover{filter:brightness(1.25)}
+.pol-hint{font-size:10.5px;color:#6b7280;padding:4px 10px 6px}
 #log{max-height:640px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 td{padding:7px 10px;border-bottom:1px solid #27303f;vertical-align:top}
@@ -71,9 +80,16 @@ tr.fresh{animation:flash 1.2s ease-out}
     <div class="tile"><div class="k">로그인 실패</div><div class="v amber" id="t-fail">0</div></div>
   </div>
   <div class="grid">
-    <div class="card">
-      <h2>활성 세션 · 계정 통제</h2>
-      <div class="sess" id="sess"><div class="empty">불러오는 중…</div></div>
+    <div class="left-col">
+      <div class="card">
+        <h2>활성 세션 · 계정 통제</h2>
+        <div class="sess" id="sess"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <h2>접근 정책 관리</h2>
+        <div class="pol" id="pol"><div class="empty">불러오는 중…</div></div>
+        <div class="pol-hint">칩 클릭 = 권한 부여/회수 · 즉시 반영 (재로그인 불필요)</div>
+      </div>
     </div>
     <div class="card">
       <h2>실시간 감사 로그</h2>
@@ -164,6 +180,29 @@ function block(email, on) {
 }
 loadSessions();
 setInterval(loadSessions, 3000);
+
+// 접근 정책 관리
+function loadPolicy() {
+  fetch('/_ob/api/policy').then(function(r){return r.json();}).then(function(d){
+    var html = '';
+    Object.keys(d.users).forEach(function(email){
+      var u = d.users[email];
+      html += '<div class="pol-user"><b>'+esc(u.name)+' <span style="color:#6b7280;font-weight:400">'+esc(email)+'</span></b><div class="pol-chips">';
+      d.services.forEach(function(app){
+        var on = u.apps.indexOf(app) >= 0;
+        html += '<span class="pol-chip'+(on?' on':'')+'" onclick="setPolicy(\\''+esc(email)+'\\',\\''+esc(app)+'\\','+(!on)+')">'
+          + (on?'✓ ':'')+esc(app)+'</span>';
+      });
+      html += '</div></div>';
+    });
+    document.getElementById('pol').innerHTML = html || '<div class="empty">사용자 없음</div>';
+  });
+}
+function setPolicy(email, app, allow) {
+  fetch('/_ob/api/policy', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email,app:app,allow:allow})}).then(loadPolicy);
+}
+loadPolicy();
+setInterval(loadPolicy, 5000);
 </script>
 </body></html>`;
 }

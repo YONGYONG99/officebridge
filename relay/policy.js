@@ -30,6 +30,18 @@ function isAllowed(email, service) {
   return !!user && user.apps.includes(service);
 }
 
+// 관리자 대시보드에서 권한 부여/회수 → policy.json에 즉시 저장
+function setAccess(email, app, allow) {
+  const user = policy.users[email];
+  if (!user) return false;
+  const has = user.apps.includes(app);
+  if (allow && !has) user.apps.push(app);
+  if (!allow && has) user.apps = user.apps.filter((a) => a !== app);
+  fs.writeFileSync(POLICY_PATH, JSON.stringify(policy, null, 2));
+  console.log(`[policy] 변경: ${email} ${app} → ${allow ? '허용' : '회수'}`);
+  return true;
+}
+
 function deniedPage(session, service) {
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>OfficeBridge — 접근 거부</title>
 <style>body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#111827;color:#f9fafb;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
@@ -50,4 +62,4 @@ a{color:#60a5fa;font-size:13px}</style></head>
 </div></body></html>`;
 }
 
-module.exports = { getUsers, isAllowed, deniedPage };
+module.exports = { getUsers, isAllowed, setAccess, deniedPage };

@@ -4,17 +4,27 @@
     "kim.sales@demo.co.kr": {
       "name": "김영업 (영업팀)",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": ["groupware", "wiki"]
+      "apps": [
+        "groupware",
+        "wiki"
+      ]
     },
     "lee.dev@demo.co.kr": {
       "name": "이개발 (개발팀)",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": ["groupware", "wiki"]
+      "apps": [
+        "groupware",
+        "wiki"
+      ]
     },
     "park.hr@demo.co.kr": {
       "name": "박인사 (인사팀)",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": ["groupware", "wiki", "hrdb"]
+      "apps": [
+        "groupware",
+        "wiki",
+        "hrdb"
+      ]
     }
   }
 }
