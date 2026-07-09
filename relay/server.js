@@ -27,12 +27,17 @@ const pending = new Map();
 
 // ── 에러 화면 ──────────────────────────────────────────────
 function errorPage(status, title, detail) {
-  return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>OfficeBridge</title>
-<style>body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#111827;color:#f9fafb;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
-.card{text-align:center;max-width:420px;padding:40px}
-.logo{font-size:14px;letter-spacing:2px;color:#60a5fa;margin-bottom:24px}
-h1{font-size:48px;margin:0 0 8px}p{color:#9ca3af;font-size:15px;line-height:1.6}</style></head>
-<body><div class="card"><div class="logo">🌉 OFFICEBRIDGE</div><h1>${status}</h1><p><strong>${title}</strong></p><p>${detail}</p></div></body></html>`;
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OfficeBridge</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;background:#eef1f6;color:#14224e;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.card{text-align:center;max-width:440px;padding:44px 40px;background:#fff;border:1px solid #dfe5ef;border-radius:14px;box-shadow:0 10px 30px rgba(20,34,78,.1)}
+.logo{font-size:19px;margin-bottom:22px}
+.logo b{font-weight:800}
+.logo b i{font-style:normal;color:#9aa3b5}
+h1{font-size:44px;margin-bottom:8px}
+p{color:#8a93a6;font-size:14.5px;line-height:1.7}
+p strong{color:#3d4a63}</style></head>
+<body><div class="card"><div class="logo">Office<b>BR<i>I</i>DGE</b></div><h1>${status}</h1><p><strong>${title}</strong></p><p>${detail}</p></div></body></html>`;
 }
 
 function sendError(res, status, title, detail) {

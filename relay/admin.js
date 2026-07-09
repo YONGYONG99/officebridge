@@ -4,12 +4,17 @@
 
 function tokenPromptPage() {
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OfficeBridge 관제</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#111827;color:#f9fafb;display:flex;align-items:center;justify-content:center;min-height:100vh}
-.card{width:340px;padding:36px;background:#1f2937;border-radius:16px}
-.logo{font-size:13px;letter-spacing:2px;color:#60a5fa;text-align:center;margin-bottom:18px}
-input{width:100%;padding:11px 14px;background:#111827;border:1px solid #4b5563;border-radius:10px;color:#f9fafb;font-size:14px;margin-bottom:12px}
-button{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}</style></head>
-<body><div class="card"><div class="logo">🌉 OFFICEBRIDGE 관제</div>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;background:#eef1f6;color:#14224e;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.card{width:340px;padding:36px;background:#fff;border:1px solid #dfe5ef;border-radius:14px;box-shadow:0 10px 30px rgba(20,34,78,.1)}
+.logo{font-size:20px;text-align:center;margin-bottom:4px}
+.logo b{font-weight:800}
+.logo b i{font-style:normal;color:#9aa3b5}
+.sub{font-size:12.5px;color:#8a93a6;text-align:center;margin-bottom:20px}
+input{width:100%;padding:12px 14px;background:#fff;border:1px solid #d6dbe6;border-radius:8px;color:#14224e;font-size:14px;margin-bottom:12px}
+input:focus{outline:none;border-color:#14224e}
+button{width:100%;padding:12px;background:#14224e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+button:hover{background:#1d2f66}</style></head>
+<body><div class="card"><div class="logo">Office<b>BR<i>I</i>DGE</b></div><div class="sub">관제 대시보드 — 관리자 인증</div>
 <form method="GET" action="/_ob/admin"><input type="password" name="token" placeholder="관리자 토큰" autofocus><button>접속</button></form>
 </div></body></html>`;
 }
@@ -18,76 +23,79 @@ function adminPage(company) {
   return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OfficeBridge 관제 대시보드</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#111827;color:#f9fafb;min-height:100vh}
-header{display:flex;align-items:center;gap:10px;padding:14px 22px;background:#1f2937;border-bottom:1px solid #374151}
-header .logo{font-size:14px;letter-spacing:2px;color:#60a5fa;font-weight:700}
-header .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#9ca3af}
-.dot{width:8px;height:8px;border-radius:50%;background:#4b5563}
-.dot.on{background:#34d399}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;background:#eef1f6;color:#14224e;min-height:100vh}
+header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#fff;border-bottom:1px solid #dfe5ef}
+.logo{font-size:18px;color:#14224e;letter-spacing:-.3px}
+.logo b{font-weight:800}
+.logo b i{font-style:normal;color:#9aa3b5}
+.hd{font-size:13px;color:#3d4a63;font-weight:600}
+.co{font-size:12px;font-weight:700;padding:3px 11px;background:#eef1f6;border:1px solid #dfe5ef;border-radius:8px;letter-spacing:1px}
+header .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#8a93a6}
+.dot{width:8px;height:8px;border-radius:50%;background:#c3cad9}
+.dot.on{background:#1e8e5a}
 main{max-width:1200px;margin:20px auto;padding:0 16px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.tile{background:#1f2937;border-radius:12px;padding:16px 18px}
-.tile .k{font-size:12px;color:#9ca3af;margin-bottom:6px}
-.tile .v{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
-.tile .v.green{color:#34d399}.tile .v.red{color:#f87171}.tile .v.amber{color:#fbbf24}
+.tile{background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:14px 18px}
+.tile .k{font-size:12px;color:#8a93a6;margin-bottom:6px}
+.tile .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:#14224e}
+.tile .v.green{color:#1e8e5a}.tile .v.red{color:#c0392b}.tile .v.amber{color:#b7791f}
 .grid{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:start}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
-.card{background:#1f2937;border-radius:12px;overflow:hidden}
-.card h2{font-size:13px;color:#9ca3af;padding:12px 16px;border-bottom:1px solid #374151;font-weight:600}
+.left-col{display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border:1px solid #dfe5ef;border-radius:10px;overflow:hidden}
+.card h2{font-size:13px;color:#3d4a63;padding:12px 16px;border-bottom:1px solid #eef1f6;font-weight:700}
 .sess{padding:8px}
 .sess-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px}
-.sess-item:hover{background:#374151}
+.sess-item:hover{background:#f5f7fb}
 .sess-item .who{flex:1;min-width:0}
 .sess-item .who b{font-size:13px;display:block}
-.sess-item .who span{font-size:11px;color:#9ca3af;display:block;overflow:hidden;text-overflow:ellipsis}
-.sess-item button{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid #4b5563;background:#111827;color:#f9fafb;cursor:pointer;white-space:nowrap}
-.sess-item button:hover{border-color:#f87171;color:#f87171}
-.sess-item button.unblock:hover{border-color:#34d399;color:#34d399}
-.empty{padding:18px;font-size:12px;color:#6b7280;text-align:center}
-.blocked-tag{font-size:10px;color:#f87171;border:1px solid #f87171;border-radius:6px;padding:1px 6px}
-.left-col{display:flex;flex-direction:column;gap:12px}
+.sess-item .who span{font-size:11px;color:#8a93a6;display:block;overflow:hidden;text-overflow:ellipsis}
+.sess-item button{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid #d6dbe6;background:#fff;color:#3d4a63;cursor:pointer;white-space:nowrap}
+.sess-item button:hover{border-color:#c0392b;color:#c0392b}
+.sess-item button.unblock:hover{border-color:#1e8e5a;color:#1e8e5a}
+.empty{padding:18px;font-size:12px;color:#a8b0c2;text-align:center}
+.blocked-tag{font-size:10px;color:#c0392b;border:1px solid #f5c1c1;background:#fdecec;border-radius:6px;padding:1px 6px}
 .pol{padding:10px}
 .pol-user{padding:8px 10px}
 .pol-user b{font-size:13px;display:block;margin-bottom:6px}
 .pol-chips{display:flex;flex-wrap:wrap;gap:6px}
-.pol-chip{font-size:11.5px;padding:4px 11px;border-radius:14px;cursor:pointer;border:1px solid #4b5563;color:#6b7280;background:#111827;user-select:none}
-.pol-chip.on{border-color:#34d39988;color:#34d399;background:#34d39914}
-.pol-chip:hover{filter:brightness(1.25)}
-.pol-hint{font-size:10.5px;color:#6b7280;padding:4px 10px 6px}
+.pol-chip{font-size:11.5px;padding:4px 11px;border-radius:14px;cursor:pointer;border:1px solid #d6dbe6;color:#a8b0c2;background:#fff;user-select:none}
+.pol-chip.on{border-color:#8fd3b2;color:#1e8e5a;background:#e9f7f0}
+.pol-chip:hover{filter:brightness(.96)}
+.pol-hint{font-size:10.5px;color:#a8b0c2;padding:4px 10px 6px}
 .apps{padding:8px}
 .app-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px}
-.app-item:hover{background:#374151}
+.app-item:hover{background:#f5f7fb}
 .app-item .ic{font-size:18px}
 .app-item .info{flex:1;min-width:0}
 .app-item .info b{font-size:13px;display:block}
-.app-item .info span{font-size:11px;color:#9ca3af;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.app-item button{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid #4b5563;background:#111827;color:#f9fafb;cursor:pointer}
-.app-item button:hover{border-color:#f87171;color:#f87171}
-.app-form{padding:10px 12px;border-top:1px solid #374151;display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.app-form input{padding:8px 10px;background:#111827;border:1px solid #4b5563;border-radius:8px;color:#f9fafb;font-size:12px}
-.app-form input:focus{outline:none;border-color:#60a5fa}
+.app-item .info span{font-size:11px;color:#8a93a6;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-item button{font-size:11px;padding:5px 9px;border-radius:7px;border:1px solid #d6dbe6;background:#fff;color:#3d4a63;cursor:pointer}
+.app-item button:hover{border-color:#c0392b;color:#c0392b}
+.app-form{padding:10px 12px;border-top:1px solid #eef1f6;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.app-form input{padding:8px 10px;background:#fff;border:1px solid #d6dbe6;border-radius:8px;color:#14224e;font-size:12px}
+.app-form input:focus{outline:none;border-color:#14224e}
 .app-form .full{grid-column:1/-1}
-.app-form button{grid-column:1/-1;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
-.app-form button:hover{background:#1d4ed8}
-.app-err{grid-column:1/-1;font-size:11px;color:#f87171;display:none}
+.app-form button{grid-column:1/-1;padding:9px;background:#14224e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.app-form button:hover{background:#1d2f66}
+.app-err{grid-column:1/-1;font-size:11px;color:#c0392b;display:none}
 #log{max-height:640px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
-td{padding:7px 10px;border-bottom:1px solid #27303f;vertical-align:top}
-td.t{color:#9ca3af;white-space:nowrap;font-variant-numeric:tabular-nums}
-td.who b{display:block}td.who span{color:#9ca3af;font-size:11px}
-td.reason{color:#9ca3af}
+td{padding:7px 10px;border-bottom:1px solid #f1f4f9;vertical-align:top}
+td.t{color:#8a93a6;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.who b{display:block}td.who span{color:#8a93a6;font-size:11px}
+td.reason{color:#8a93a6}
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:9px;white-space:nowrap}
-.b-allow{background:#34d39922;color:#34d399;border:1px solid #34d39955}
-.b-deny{background:#f8717122;color:#f87171;border:1px solid #f8717155}
-.b-login{background:#60a5fa22;color:#60a5fa;border:1px solid #60a5fa55}
-.b-fail{background:#fbbf2422;color:#fbbf24;border:1px solid #fbbf2455}
-.b-etc{background:#9ca3af22;color:#9ca3af;border:1px solid #9ca3af55}
+.b-allow{background:#e9f7f0;color:#1e8e5a;border:1px solid #bfe6d2}
+.b-deny{background:#fdecec;color:#c0392b;border:1px solid #f5c1c1}
+.b-login{background:#e9effc;color:#2b4fd8;border:1px solid #c5d4f5}
+.b-fail{background:#fdf3e2;color:#b7791f;border:1px solid #f0dcb2}
+.b-etc{background:#f1f4f9;color:#8a93a6;border:1px solid #dfe5ef}
 tr.fresh{animation:flash 1.2s ease-out}
-@keyframes flash{from{background:#2563eb33}to{background:transparent}}
+@keyframes flash{from{background:#dbe6fb}to{background:transparent}}
 </style></head>
 <body>
-<header><span>🌉</span><span class="logo">OFFICEBRIDGE 관제 대시보드</span>
-<span style="font-size:13px;font-weight:700;padding:3px 11px;background:#111827;border:1px solid #374151;border-radius:8px;letter-spacing:1px">${company}</span>
+<header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="hd">관제 대시보드</span><span class="co">${company}</span>
 <span class="live"><span class="dot" id="dot"></span><span id="live-label">연결 중…</span></span></header>
 <main>
   <div class="tiles">
