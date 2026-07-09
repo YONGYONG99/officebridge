@@ -29,8 +29,12 @@ header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#ff
 .logo b{font-weight:800}
 .logo b i{font-style:normal;color:#9aa3b5}
 .hd{font-size:13px;color:#3d4a63;font-weight:600}
-.co{font-size:12px;font-weight:700;padding:3px 11px;background:#eef1f6;border:1px solid #dfe5ef;border-radius:8px;letter-spacing:1px}
 header .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#8a93a6}
+.corp{display:flex;flex-direction:column;gap:3px;margin-left:18px}
+.corp .r{display:flex;align-items:center;gap:7px;font-size:13px}
+.corp .r svg{flex:none}
+.corp .r b{font-weight:700;color:#14224e}
+.corp .r span{color:#3d4a63}
 .dot{width:8px;height:8px;border-radius:50%;background:#c3cad9}
 .dot.on{background:#1e8e5a}
 main{max-width:1200px;margin:20px auto;padding:0 16px}
@@ -95,8 +99,18 @@ tr.fresh{animation:flash 1.2s ease-out}
 @keyframes flash{from{background:#dbe6fb}to{background:transparent}}
 </style></head>
 <body>
-<header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="hd">관제 대시보드</span><span class="co">${company}</span>
-<span class="live"><span class="dot" id="dot"></span><span id="live-label">연결 중…</span></span></header>
+<header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="hd">관제 대시보드</span>
+<span class="live"><span class="dot" id="dot"></span><span id="live-label">연결 중…</span></span>
+<div class="corp">
+  <div class="r">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2b4fd8" stroke-width="2" stroke-linecap="round"><path d="M3 21h18"/><path d="M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/></svg>
+    <b>${company}</b>
+  </div>
+  <div class="r">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2b4fd8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+    <span>관리자</span>
+  </div>
+</div></header>
 <main>
   <div class="tiles">
     <div class="tile"><div class="k">활성 세션</div><div class="v" id="t-sess">0</div></div>
