@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m 'docs: PRD v0.4 + README — F-2/F-5 완료 반영, start.sh 운영 절차 정리 *)",
+      "Bash(git push *)"
+    ]
+  }
+}
