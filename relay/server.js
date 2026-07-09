@@ -6,9 +6,10 @@
 const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
-const { getSession, handleAuthRoutes } = require('./auth');
+const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
 const { isAllowed, deniedPage } = require('./policy');
 const audit = require('./audit');
+const { adminPage, tokenPromptPage } = require('./admin');
 
 const PORT = process.env.RELAY_PORT || 8080;
 const CONNECTOR_TOKEN = process.env.CONNECTOR_TOKEN || 'dev-token';
@@ -36,20 +37,138 @@ function sendError(res, status, title, detail) {
   res.end(errorPage(status, title, detail));
 }
 
+// ── 관리자 대시보드 + 관리 API (F-6) ───────────────────────
+function isAdminReq(req, url) {
+  if (url.searchParams.get('token') === ADMIN_TOKEN) return true;
+  const cookies = req.headers.cookie || '';
+  return cookies.split(';').some((c) => c.trim() === `ob_admin=${ADMIN_TOKEN}`);
+}
+
+function readJsonBody(req, cb) {
+  const chunks = [];
+  req.on('data', (c) => chunks.push(c));
+  req.on('end', () => {
+    try {
+      cb(JSON.parse(Buffer.concat(chunks).toString() || '{}'));
+    } catch {
+      cb({});
+    }
+  });
+}
+
+// /_ob/admin, /_ob/api/* 처리. 처리했으면 true 반환
+function handleAdminRoutes(req, res, url) {
+  const p = url.pathname;
+  if (p !== '/_ob/admin' && !p.startsWith('/_ob/api/')) return false;
+
+  if (!isAdminReq(req, url)) {
+    if (p === '/_ob/admin') {
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+      res.end(tokenPromptPage());
+    } else {
+      res.writeHead(401, { 'content-type': 'application/json' });
+      res.end('{"error":"unauthorized"}');
+    }
+    return true;
+  }
+
+  // 대시보드 페이지 (?token= 접속 시 쿠키 발급 → 이후 SSE/API는 쿠키로 인증)
+  if (p === '/_ob/admin') {
+    res.writeHead(200, {
+      'content-type': 'text/html; charset=utf-8',
+      'set-cookie': `ob_admin=${ADMIN_TOKEN}; Path=/; HttpOnly`,
+    });
+    res.end(adminPage());
+    return true;
+  }
+
+  // 감사 로그 조회
+  if (p === '/_ob/api/logs') {
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(audit.recent(Number(url.searchParams.get('n')) || 200)));
+    return true;
+  }
+
+  // 감사 로그 실시간 스트림 (SSE)
+  if (p === '/_ob/api/stream') {
+    res.writeHead(200, {
+      'content-type': 'text/event-stream',
+      'cache-control': 'no-cache',
+      connection: 'keep-alive',
+    });
+    res.write('retry: 2000\n\n');
+    const unsubscribe = audit.subscribe((e) => res.write(`data: ${JSON.stringify(e)}\n\n`));
+    const heartbeat = setInterval(() => res.write(': ping\n\n'), 25000);
+    req.on('close', () => {
+      unsubscribe();
+      clearInterval(heartbeat);
+    });
+    return true;
+  }
+
+  // 활성 세션 + 차단 계정 목록
+  if (p === '/_ob/api/sessions') {
+    const list = [...sessions.entries()].map(([sid, s]) => ({ sid, ...s }));
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ sessions: list, blocked: [...blocked] }));
+    return true;
+  }
+
+  // 세션 즉시 종료
+  if (p === '/_ob/api/kill' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const victim = sessions.get(body.sid);
+      sessions.delete(body.sid);
+      audit.record({
+        type: 'ADMIN', decision: 'OK',
+        email: victim?.email, name: victim?.name,
+        ip: audit.clientIp(req), reason: '관리자가 세션을 강제 종료',
+      });
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"ok":true}');
+    });
+    return true;
+  }
+
+  // 계정 차단/해제 (차단 시 해당 계정의 모든 세션 즉시 폐기 + 재로그인 거부)
+  if (p === '/_ob/api/block' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const { email, block } = body;
+      if (block) {
+        blocked.add(email);
+        let killed = 0;
+        for (const [sid, s] of sessions) {
+          if (s.email === email) {
+            sessions.delete(sid);
+            killed++;
+          }
+        }
+        audit.record({
+          type: 'ADMIN', decision: 'OK', email,
+          ip: audit.clientIp(req), reason: `관리자가 계정 차단 (세션 ${killed}개 폐기)`,
+        });
+      } else {
+        blocked.delete(email);
+        audit.record({
+          type: 'ADMIN', decision: 'OK', email,
+          ip: audit.clientIp(req), reason: '관리자가 계정 차단 해제',
+        });
+      }
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"ok":true}');
+    });
+    return true;
+  }
+
+  return false;
+}
+
 // ── 게이트웨이 프록시 ──────────────────────────────────────
 function handleGatewayRequest(req, res) {
-  // 0) 게이트웨이 내부 경로 (로그인/로그아웃/관리 API)
+  // 0) 게이트웨이 내부 경로 (로그인/로그아웃/관리자)
   if (req.url.startsWith('/_ob/')) {
     const url = new URL(req.url, 'http://gateway');
-    // 감사 로그 조회 API (F-6 대시보드 데이터 소스, 관리자 토큰 필요)
-    if (url.pathname === '/_ob/api/logs') {
-      if (url.searchParams.get('token') !== ADMIN_TOKEN) {
-        res.writeHead(401, { 'content-type': 'application/json' });
-        return res.end('{"error":"unauthorized"}');
-      }
-      res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
-      return res.end(JSON.stringify(audit.recent(Number(url.searchParams.get('n')) || 200)));
-    }
+    if (handleAdminRoutes(req, res, url)) return;
     if (handleAuthRoutes(req, res)) return;
     return sendError(res, 404, '알 수 없는 경로', '요청한 페이지를 찾을 수 없습니다.');
   }

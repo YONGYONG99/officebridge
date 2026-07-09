@@ -7,6 +7,8 @@ const audit = require('./audit');
 
 // sessionId → { email, name, createdAt }
 const sessions = new Map();
+// 관리자가 차단한 계정 (로그인 자체 거부)
+const blocked = new Set();
 
 function parseCookies(req) {
   const out = {};
@@ -97,6 +99,14 @@ function handleAuthRoutes(req, res) {
       const email = (form.get('email') || '').trim().toLowerCase();
       const password = form.get('password') || '';
       const next = form.get('next') || '/';
+      if (blocked.has(email)) {
+        audit.record({
+          type: 'LOGIN', decision: 'FAIL',
+          email, ip: audit.clientIp(req), reason: '관리자에 의해 차단된 계정',
+        });
+        res.writeHead(401, { 'content-type': 'text/html; charset=utf-8' });
+        return res.end(loginPage(next, '차단된 계정입니다. 관리자에게 문의하세요.'));
+      }
       const user = getUsers()[email];
       const hash = crypto.createHash('sha256').update(password).digest('hex');
       if (!user || user.passwordHash !== hash) {
@@ -143,4 +153,4 @@ function handleAuthRoutes(req, res) {
   return false;
 }
 
-module.exports = { getSession, handleAuthRoutes, sessions };
+module.exports = { getSession, handleAuthRoutes, sessions, blocked };
