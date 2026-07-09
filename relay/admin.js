@@ -141,10 +141,11 @@ tr.fresh{animation:flash 1.2s ease-out}
 .rule-item:last-child{border-bottom:none}
 .rule-item .info{flex:1;min-width:0}
 .rule-item .info b{font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rules-card{overflow:visible}
 .help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#e4e9f2;color:#6b7280;font-size:11px;font-weight:700;cursor:help;flex:none}
 .help:hover,.help:focus{background:#14224e;color:#fff;outline:none}
-.help .tip{visibility:hidden;opacity:0;position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);width:260px;background:#14224e;color:#fff;font-size:12px;font-weight:400;line-height:1.6;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(20,34,78,.25);z-index:10;transition:opacity .12s;text-align:left}
-.help .tip:before{content:'';position:absolute;left:50%;bottom:100%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#14224e}
+.help .tip{visibility:hidden;opacity:0;position:absolute;left:0;top:calc(100% + 9px);width:300px;max-width:70vw;background:#14224e;color:#fff;font-size:12px;font-weight:400;line-height:1.65;padding:11px 13px;border-radius:8px;box-shadow:0 6px 20px rgba(20,34,78,.25);z-index:20;transition:opacity .12s;text-align:left;white-space:normal}
+.help .tip:before{content:'';position:absolute;left:14px;bottom:100%;border:6px solid transparent;border-bottom-color:#14224e}
 .help:hover .tip,.help:focus .tip{visibility:visible;opacity:1}
 .rule-tag{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:8px;background:#e9effc;color:#2b4fd8;border:1px solid #c5d4f5}
 .rule-tag.red{background:#fdecec;color:#c0392b;border-color:#f5c1c1}
@@ -351,12 +352,12 @@ setInterval(loadPolicy, 5000);`;
 // ── 페이지: 행위 기반 제어 (Continuous Verification) ────────
 function rulesPage() {
   const content = `
-  <div class="card narrow">
+  <div class="card narrow rules-card">
     <h2>행위 기반 접근제어 룰셋 <span style="font-weight:400;color:#8a93a6">— Continuous Verification</span></h2>
     <div id="rules"><div class="empty">불러오는 중…</div></div>
     <div class="hint">OfficeBridge가 제공·관리하는 룰셋입니다. 인증된 세션이라도 <b>매 요청마다 재검증</b>되며, 위반 시 [시스템 접속로그]에 [행위기반] 차단으로 기록됩니다. 룰 기준은 벤더가 지속 업데이트합니다.</div>
   </div>
-  <div class="card narrow">
+  <div class="card narrow rules-card">
     <h2>엔드포인트 연동 <span style="font-weight:400;color:#8a93a6">— Device Posture</span></h2>
     <div id="rules-device"><div class="empty">불러오는 중…</div></div>
     <div class="hint">엔드포인트 보안 솔루션(OfficeKeeper 등)과 연동해 단말의 보안 상태를 접속 조건으로 검증합니다.</div>
