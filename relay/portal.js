@@ -31,9 +31,12 @@ header{display:flex;align-items:center;gap:12px;padding:15px 24px;background:#ff
 .logo{font-size:19px;color:#14224e;letter-spacing:-.3px}
 .logo b{font-weight:800}
 .logo b i{font-style:normal;color:#9aa3b5}
-.co{font-size:12px;font-weight:700;padding:3px 11px;background:#eef1f6;border:1px solid #dfe5ef;border-radius:8px;letter-spacing:1px}
-header .me{margin-left:auto;font-size:13px;color:#8a93a6}
-header a.out{color:#14224e;font-size:13px;text-decoration:none;margin-left:14px;font-weight:600}
+.corp{margin-left:auto;display:flex;flex-direction:column;gap:3px}
+.corp .r{display:flex;align-items:center;gap:7px;font-size:13px}
+.corp .r svg{flex:none}
+.corp .r b{font-weight:700;color:#14224e}
+.corp .r span{color:#3d4a63}
+header a.out{color:#14224e;font-size:13px;text-decoration:none;margin-left:18px;font-weight:600;align-self:center}
 main{max-width:680px;margin:0 auto;padding:44px 20px}
 h1{font-size:20px;margin-bottom:6px}
 .sub{font-size:13.5px;color:#8a93a6;margin-bottom:26px}
@@ -49,8 +52,18 @@ h1{font-size:20px;margin-bottom:6px}
 .empty{background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:36px;text-align:center;color:#8a93a6;font-size:14px}
 </style></head>
 <body>
-<header><span class="logo">Office<b>BR<i>I</i>DGE</b></span><span class="co">${company}</span>
-<span class="me">${session.name}</span><a class="out" href="/_ob/logout">로그아웃</a></header>
+<header><span class="logo">Office<b>BR<i>I</i>DGE</b></span>
+<div class="corp">
+  <div class="r">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2b4fd8" stroke-width="2" stroke-linecap="round"><path d="M3 21h18"/><path d="M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h2M8 12h2M8 16h2"/></svg>
+    <b>${company}</b>
+  </div>
+  <div class="r">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2b4fd8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+    <span>${session.name}</span>
+  </div>
+</div>
+<a class="out" href="/_ob/logout">로그아웃</a></header>
 <main>
   <h1>${company} 사내 시스템</h1>
   <div class="sub">🔒 표시된 시스템은 ${session.name}님께 접근 권한이 없습니다. 필요 시 관리자에게 권한을 요청하세요.</div>
