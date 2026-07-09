@@ -2,10 +2,12 @@
 // - 게이트웨이 프록시: 호스트명 첫 라벨로 서비스 판별 (groupware.localhost → "groupware")
 // - 터널 매니저: 커넥터의 아웃바운드 WSS 연결(/tunnel)을 유지하고 HTTP 요청/응답을 중계
 //
-// F-1(터널링) 단계. 인증(F-2)/정책(F-3)은 handleGatewayRequest 앞단에 미들웨어로 끼울 예정.
+// 요청 처리 순서: /_ob/* 내부 경로 → 인증(F-2) → 정책(F-3) → 터널 전달(F-1)
 const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
+const { getSession, handleAuthRoutes } = require('./auth');
+const { isAllowed, deniedPage } = require('./policy');
 
 const PORT = process.env.RELAY_PORT || 8080;
 const CONNECTOR_TOKEN = process.env.CONNECTOR_TOKEN || 'dev-token';
@@ -34,9 +36,31 @@ function sendError(res, status, title, detail) {
 
 // ── 게이트웨이 프록시 ──────────────────────────────────────
 function handleGatewayRequest(req, res) {
+  // 0) 게이트웨이 내부 경로 (로그인/로그아웃)
+  if (req.url.startsWith('/_ob/')) {
+    if (handleAuthRoutes(req, res)) return;
+    return sendError(res, 404, '알 수 없는 경로', '요청한 페이지를 찾을 수 없습니다.');
+  }
+
   const host = (req.headers.host || '').split(':')[0];
   const service = host.split('.')[0];
 
+  // 1) 인증 (F-2) — 미인증이면 로그인 화면으로
+  const session = getSession(req);
+  if (!session) {
+    res.writeHead(302, { location: `/_ob/login?next=${encodeURIComponent(req.url)}` });
+    return res.end();
+  }
+
+  // 2) 정책 판정 (F-3) — 허가되지 않은 앱은 차단
+  if (!isAllowed(session.email, service)) {
+    console.log(`[policy] ❌ DENY  ${session.email} → ${service}${req.url}`);
+    res.writeHead(403, { 'content-type': 'text/html; charset=utf-8' });
+    return res.end(deniedPage(session, service));
+  }
+  console.log(`[policy] ✅ ALLOW ${session.email} → ${service}${req.url}`);
+
+  // 3) 터널 전달 (F-1)
   const tunnel = tunnels.get(service);
   if (!tunnel) {
     return sendError(res, 503, '연결할 수 없는 서비스입니다',

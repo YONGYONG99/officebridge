@@ -1,0 +1,16 @@
+{
+  "users": {
+    "kim.sales@demo.co.kr": {
+      "name": "김영업 (영업팀)",
+      "apps": ["groupware", "wiki"]
+    },
+    "lee.dev@demo.co.kr": {
+      "name": "이개발 (개발팀)",
+      "apps": ["groupware", "wiki"]
+    },
+    "park.hr@demo.co.kr": {
+      "name": "박인사 (인사팀)",
+      "apps": ["groupware", "wiki", "hrdb"]
+    }
+  }
+}
