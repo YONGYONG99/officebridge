@@ -155,8 +155,7 @@ a{display:inline-block;margin-top:18px;color:#14224e;font-size:13px;font-weight:
   <div class="shield">🛡️</div>
   <h1>접근 권한이 없습니다</h1>
   <p><strong>"${service}"</strong> 시스템에 대한 접근 정책이 없어 요청이 차단되었습니다.<br>필요한 경우 관리자에게 권한을 요청하세요.</p>
-  <div class="who">${session.name} · ${session.email}</div><br>
-  <a href="/_ob/logout">다른 계정으로 로그인</a>
+  <div class="who">${session.name} · ${session.email}</div>
 </div></body></html>`;
 }
 
