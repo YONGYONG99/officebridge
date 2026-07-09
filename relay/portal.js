@@ -65,7 +65,7 @@ h1{font-size:20px;margin-bottom:6px}
 </div>
 <a class="out" href="/_ob/logout">로그아웃</a></header>
 <main>
-  <h1>${company} 사내 시스템</h1>
+  <h1>사내 시스템</h1>
   <div class="sub">🔒 표시된 시스템은 ${session.name}님께 접근 권한이 없습니다. 필요 시 관리자에게 권한을 요청하세요.</div>
   ${rows || '<div class="empty">등록된 사내 시스템이 없습니다.</div>'}
   <div class="note">모든 접속은 OfficeBridge 제로트러스트 게이트웨이를 통해 검증·기록됩니다.<br>
