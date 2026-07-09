@@ -137,11 +137,15 @@ tr.fresh{animation:flash 1.2s ease-out}
 .app-form button:hover{background:#1d2f66}
 .app-err{grid-column:1/-1;font-size:11px;color:#c0392b;display:none}
 .narrow{max-width:640px}
-.rule-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid #f1f4f9}
+.rule-item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid #f1f4f9}
 .rule-item:last-child{border-bottom:none}
 .rule-item .info{flex:1;min-width:0}
-.rule-item .info b{font-size:13.5px;display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.rule-item .info p{font-size:12px;color:#8a93a6;line-height:1.6}
+.rule-item .info b{font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#e4e9f2;color:#6b7280;font-size:11px;font-weight:700;cursor:help;flex:none}
+.help:hover,.help:focus{background:#14224e;color:#fff;outline:none}
+.help .tip{visibility:hidden;opacity:0;position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);width:260px;background:#14224e;color:#fff;font-size:12px;font-weight:400;line-height:1.6;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(20,34,78,.25);z-index:10;transition:opacity .12s;text-align:left}
+.help .tip:before{content:'';position:absolute;left:50%;bottom:100%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#14224e}
+.help:hover .tip,.help:focus .tip{visibility:visible;opacity:1}
 .rule-tag{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:8px;background:#e9effc;color:#2b4fd8;border:1px solid #c5d4f5}
 .rule-tag.red{background:#fdecec;color:#c0392b;border-color:#f5c1c1}
 .rule-param{font-size:11px;color:#8a93a6;font-weight:400}
@@ -361,9 +365,10 @@ function rulesPage() {
 var OK_LOGO='<span class="ok-logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#1a3fa8" stroke-width="2.4"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#1a3fa8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b>OfficeKeeper</b></span>';
 function ruleItemHtml(r){
   var mid = r.vendor==='officekeeper' ? OK_LOGO+' ' : '';
+  var help = '<span class="help" tabindex="0" aria-label="'+esc(r.desc)+'">?<span class="tip">'+esc(r.desc)+'</span></span>';
   return '<div class="rule-item"><div class="info">'
-    +'<b>'+esc(r.title)+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> '+mid+'<span class="rule-param">'+esc(r.param)+'</span></b>'
-    +'<p>'+esc(r.desc)+'</p></div>'
+    +'<b>'+esc(r.title)+' '+help+' <span class="rule-tag'+(r.action==='차단'||r.action==='계정 잠금'?' red':'')+'">'+esc(r.action)+'</span> '+mid+'<span class="rule-param">'+esc(r.param)+'</span></b>'
+    +'</div>'
     +'<label class="switch"><input type="checkbox" '+(r.enabled?'checked':'')+' onchange="toggleRule(\\''+esc(r.id)+'\\', this.checked)"><span class="slider"></span></label>'
     +'</div>';
 }
