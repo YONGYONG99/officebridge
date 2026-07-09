@@ -1,37 +1,35 @@
 {
-  "_comment": "passwordHash = SHA-256 hex. 데모 계정 비밀번호는 전부 demo1234. url = 커넥터가 전달할 사내 원본 주소",
-  "_v": 3,
+  "_comment": "passwordHash = SHA-256 hex. 데모 계정 비밀번호는 전부 demo1234. url = 커넥터가 전달할 사내 원본 주소. 사용자 권한 = 부서(depts) 정책 + 개인(users.apps) 추가 권한",
+  "_v": 4,
   "company": { "name": "AMD" },
   "apps": {
     "groupware": { "title": "그룹웨어", "icon": "🏢", "desc": "전자결재 · 공지 · 일정", "url": "http://127.0.0.1:8081" },
     "wiki": { "title": "사내 위키", "icon": "📚", "desc": "업무 문서 · 온보딩 가이드", "url": "http://127.0.0.1:8082" },
     "hrdb": { "title": "인사DB", "icon": "🔒", "desc": "임직원 인사정보 (민감 시스템)", "url": "http://127.0.0.1:8083" }
   },
+  "depts": {
+    "sales": { "name": "영업팀", "apps": ["groupware", "wiki"] },
+    "dev": { "name": "개발팀", "apps": ["groupware", "wiki"] },
+    "hr": { "name": "인사팀", "apps": ["groupware", "wiki", "hrdb"] }
+  },
   "users": {
     "kim.sales@demo.co.kr": {
-      "name": "김영업 (영업팀)",
+      "name": "김영업",
+      "dept": "sales",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": [
-        "groupware",
-        "wiki"
-      ]
+      "apps": []
     },
     "lee.dev@demo.co.kr": {
-      "name": "이개발 (개발팀)",
+      "name": "이개발",
+      "dept": "dev",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": [
-        "groupware",
-        "wiki"
-      ]
+      "apps": []
     },
     "park.hr@demo.co.kr": {
-      "name": "박인사 (인사팀)",
+      "name": "박인사",
+      "dept": "hr",
       "passwordHash": "0ead2060b65992dca4769af601a1b3a35ef38cfad2c2c465bb160ea764157c5d",
-      "apps": [
-        "groupware",
-        "wiki",
-        "hrdb"
-      ]
+      "apps": []
     }
   }
 }

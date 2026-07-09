@@ -2,7 +2,7 @@
 // 지금은 데모 계정 선택형 로그인. 추후 Google OAuth로 교체 시 이 파일의
 // 로그인 화면/POST 처리만 OAuth 리다이렉트로 바꾸면 됨 (세션 구조는 그대로).
 const crypto = require('crypto');
-const { getUsers, getCompany } = require('./policy');
+const { getUsers, getDepts, getCompany } = require('./policy');
 const audit = require('./audit');
 
 // sessionId → { email, name, createdAt }
@@ -148,11 +148,13 @@ function handleAuthRoutes(req, res) {
         res.writeHead(401, { 'content-type': 'text/html; charset=utf-8' });
         return res.end(loginPage(next, '이메일 또는 비밀번호가 올바르지 않습니다.'));
       }
+      const deptName = getDepts()[user.dept]?.name;
+      const displayName = deptName ? `${user.name} (${deptName})` : user.name;
       const sid = crypto.randomUUID();
-      sessions.set(sid, { email, name: user.name, createdAt: Date.now() });
+      sessions.set(sid, { email, name: displayName, dept: user.dept, createdAt: Date.now() });
       audit.record({
         type: 'LOGIN', decision: 'OK',
-        email, name: user.name, ip: audit.clientIp(req), reason: '비밀번호 인증 성공',
+        email, name: displayName, ip: audit.clientIp(req), reason: '비밀번호 인증 성공',
       });
       res.writeHead(302, {
         'set-cookie': `ob_session=${sid}; Path=/; HttpOnly${cookieDomainAttr(req.headers.host)}`,

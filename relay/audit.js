@@ -30,8 +30,9 @@ function record(ev) {
   return e;
 }
 
-function recent(n = 200) {
-  return events.slice(-n);
+function recent(n = 200, type) {
+  const src = type ? events.filter((e) => e.type === type) : events;
+  return src.slice(-n);
 }
 
 function subscribe(fn) {

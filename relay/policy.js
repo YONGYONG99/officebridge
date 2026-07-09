@@ -54,9 +54,37 @@ function getCompany() {
   return policy.company || { name: '' };
 }
 
+function getDepts() {
+  return policy.depts || {};
+}
+
+// 권한 = 부서 정책 ∪ 개인 추가 권한
 function isAllowed(email, service) {
   const user = policy.users[email];
-  return !!user && user.apps.includes(service);
+  if (!user) return false;
+  if (user.apps.includes(service)) return true;
+  const dept = (policy.depts || {})[user.dept];
+  return !!dept && dept.apps.includes(service);
+}
+
+// 사용자에게 허용된 전체 앱 목록 (포털 표시용)
+function allowedAppsOf(email) {
+  const user = policy.users[email];
+  if (!user) return [];
+  const dept = (policy.depts || {})[user.dept];
+  return [...new Set([...(dept ? dept.apps : []), ...user.apps])];
+}
+
+// 부서(조직) 단위 권한 부여/회수
+function setDeptAccess(deptKey, app, allow) {
+  const dept = (policy.depts || {})[deptKey];
+  if (!dept) return false;
+  const has = dept.apps.includes(app);
+  if (allow && !has) dept.apps.push(app);
+  if (!allow && has) dept.apps = dept.apps.filter((a) => a !== app);
+  save();
+  console.log(`[policy] 부서 정책 변경: ${deptKey} ${app} → ${allow ? '허용' : '회수'}`);
+  return true;
 }
 
 function save() {
@@ -118,4 +146,8 @@ a{display:inline-block;margin-top:18px;color:#14224e;font-size:13px;font-weight:
 </div></body></html>`;
 }
 
-module.exports = { getUsers, getAppMeta, getCompany, isAllowed, setAccess, setApp, removeApp, deniedPage };
+module.exports = {
+  getUsers, getDepts, getAppMeta, getCompany,
+  isAllowed, allowedAppsOf, setAccess, setDeptAccess, setApp, removeApp,
+  deniedPage,
+};

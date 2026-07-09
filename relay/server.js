@@ -7,7 +7,11 @@ const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes, sessions, blocked } = require('./auth');
-const { getUsers, getAppMeta, getCompany, isAllowed, setAccess, setApp, removeApp, deniedPage } = require('./policy');
+const {
+  getUsers, getDepts, getAppMeta, getCompany,
+  isAllowed, allowedAppsOf, setAccess, setDeptAccess, setApp, removeApp,
+  deniedPage,
+} = require('./policy');
 const { portalPage } = require('./portal');
 const audit = require('./audit');
 const { adminPage, tokenPromptPage } = require('./admin');
@@ -64,13 +68,14 @@ function readJsonBody(req, cb) {
   });
 }
 
-// /_ob/admin, /_ob/api/* 처리. 처리했으면 true 반환
+// /_ob/admin*, /_ob/api/* 처리. 처리했으면 true 반환
 function handleAdminRoutes(req, res, url) {
   const p = url.pathname;
-  if (p !== '/_ob/admin' && !p.startsWith('/_ob/api/')) return false;
+  const isAdminPage = p === '/_ob/admin' || p.startsWith('/_ob/admin/');
+  if (!isAdminPage && !p.startsWith('/_ob/api/')) return false;
 
   if (!isAdminReq(req, url)) {
-    if (p === '/_ob/admin') {
+    if (isAdminPage) {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
       res.end(tokenPromptPage());
     } else {
@@ -80,20 +85,27 @@ function handleAdminRoutes(req, res, url) {
     return true;
   }
 
-  // 대시보드 페이지 (?token= 접속 시 쿠키 발급 → 이후 SSE/API는 쿠키로 인증)
-  if (p === '/_ob/admin') {
+  // 관리자 콘솔 페이지 (서브 URL: /dashboard, /policy/*, /logs/*)
+  // ?token= 접속 시 쿠키 발급 → 이후 SSE/API는 쿠키로 인증
+  if (isAdminPage) {
+    const page = p === '/_ob/admin' ? '/dashboard' : p.slice('/_ob/admin'.length);
+    const html = adminPage(getCompany().name, page);
+    if (!html) {
+      res.writeHead(302, { location: '/_ob/admin/dashboard' });
+      return res.end();
+    }
     res.writeHead(200, {
       'content-type': 'text/html; charset=utf-8',
       'set-cookie': `ob_admin=${ADMIN_TOKEN}; Path=/; HttpOnly`,
     });
-    res.end(adminPage(getCompany().name));
+    res.end(html);
     return true;
   }
 
-  // 감사 로그 조회
+  // 감사 로그 조회 (?type=ADMIN 등으로 필터 가능)
   if (p === '/_ob/api/logs') {
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify(audit.recent(Number(url.searchParams.get('n')) || 200)));
+    res.end(JSON.stringify(audit.recent(Number(url.searchParams.get('n')) || 200, url.searchParams.get('type') || undefined)));
     return true;
   }
 
@@ -165,16 +177,35 @@ function handleAdminRoutes(req, res, url) {
     return true;
   }
 
-  // 접근 정책 조회 (사용자별 허용 앱 + 전체 서비스 목록)
+  // 접근 정책 조회 (부서 + 사용자별 허용 앱 + 전체 서비스 목록)
   if (p === '/_ob/api/policy' && req.method === 'GET') {
     const users = {};
     for (const [email, u] of Object.entries(getUsers())) {
-      users[email] = { name: u.name, apps: u.apps }; // passwordHash 노출 금지
+      users[email] = { name: u.name, dept: u.dept, apps: u.apps }; // passwordHash 노출 금지
     }
     const services = new Set(Object.keys(getAppMeta()));
     for (const u of Object.values(users)) u.apps.forEach((a) => services.add(a));
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ users, services: [...services].sort() }));
+    res.end(JSON.stringify({ users, depts: getDepts(), services: [...services].sort() }));
+    return true;
+  }
+
+  // 부서(조직) 정책 변경
+  if (p === '/_ob/api/dept-policy' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const { dept, app, allow } = body;
+      const ok = setDeptAccess(dept, app, !!allow);
+      if (ok) {
+        const deptName = getDepts()[dept]?.name || dept;
+        audit.record({
+          type: 'ADMIN', decision: 'OK', service: app,
+          ip: audit.clientIp(req),
+          reason: `관리자가 부서 정책 ${allow ? '부여' : '회수'} (${deptName} ↔ ${app})`,
+        });
+      }
+      res.writeHead(ok ? 200 : 400, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ ok }));
+    });
     return true;
   }
 
@@ -284,7 +315,7 @@ function handleGatewayRequest(req, res) {
         ip: audit.clientIp(req), reason: '포털 접속',
       });
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-    return res.end(portalPage(session, user ? user.apps : [], getAppMeta(), req.headers.host, getCompany().name));
+    return res.end(portalPage(session, allowedAppsOf(session.email), getAppMeta(), req.headers.host, getCompany().name));
   }
 
   // 2) 정책 판정 (F-3) — 허가되지 않은 앱은 차단
