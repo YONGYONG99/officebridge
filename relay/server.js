@@ -8,9 +8,11 @@ const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 const { getSession, handleAuthRoutes } = require('./auth');
 const { isAllowed, deniedPage } = require('./policy');
+const audit = require('./audit');
 
 const PORT = process.env.RELAY_PORT || 8080;
 const CONNECTOR_TOKEN = process.env.CONNECTOR_TOKEN || 'dev-token';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin-token';
 const REQUEST_TIMEOUT_MS = 15000;
 
 // ── 터널 상태 ──────────────────────────────────────────────
@@ -36,14 +38,25 @@ function sendError(res, status, title, detail) {
 
 // ── 게이트웨이 프록시 ──────────────────────────────────────
 function handleGatewayRequest(req, res) {
-  // 0) 게이트웨이 내부 경로 (로그인/로그아웃)
+  // 0) 게이트웨이 내부 경로 (로그인/로그아웃/관리 API)
   if (req.url.startsWith('/_ob/')) {
+    const url = new URL(req.url, 'http://gateway');
+    // 감사 로그 조회 API (F-6 대시보드 데이터 소스, 관리자 토큰 필요)
+    if (url.pathname === '/_ob/api/logs') {
+      if (url.searchParams.get('token') !== ADMIN_TOKEN) {
+        res.writeHead(401, { 'content-type': 'application/json' });
+        return res.end('{"error":"unauthorized"}');
+      }
+      res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify(audit.recent(Number(url.searchParams.get('n')) || 200)));
+    }
     if (handleAuthRoutes(req, res)) return;
     return sendError(res, 404, '알 수 없는 경로', '요청한 페이지를 찾을 수 없습니다.');
   }
 
   const host = (req.headers.host || '').split(':')[0];
   const service = host.split('.')[0];
+  const isNoise = req.url === '/favicon.ico'; // 감사 로그 오염 방지
 
   // 1) 인증 (F-2) — 미인증이면 로그인 화면으로
   const session = getSession(req);
@@ -54,15 +67,33 @@ function handleGatewayRequest(req, res) {
 
   // 2) 정책 판정 (F-3) — 허가되지 않은 앱은 차단
   if (!isAllowed(session.email, service)) {
-    console.log(`[policy] ❌ DENY  ${session.email} → ${service}${req.url}`);
+    if (!isNoise)
+      audit.record({
+        type: 'ACCESS', decision: 'DENY',
+        email: session.email, name: session.name,
+        service, path: req.url, method: req.method,
+        ip: audit.clientIp(req), reason: '접근 정책 없음',
+      });
     res.writeHead(403, { 'content-type': 'text/html; charset=utf-8' });
     return res.end(deniedPage(session, service));
   }
-  console.log(`[policy] ✅ ALLOW ${session.email} → ${service}${req.url}`);
+  if (!isNoise)
+    audit.record({
+      type: 'ACCESS', decision: 'ALLOW',
+      email: session.email, name: session.name,
+      service, path: req.url, method: req.method,
+      ip: audit.clientIp(req), reason: '정적 정책 일치',
+    });
 
   // 3) 터널 전달 (F-1)
   const tunnel = tunnels.get(service);
   if (!tunnel) {
+    audit.record({
+      type: 'SYSTEM', decision: 'FAIL',
+      email: session.email, name: session.name,
+      service, path: req.url, ip: audit.clientIp(req),
+      reason: '커넥터 터널 미연결 (503)',
+    });
     return sendError(res, 503, '연결할 수 없는 서비스입니다',
       `"${service}" 서비스의 커넥터가 현재 릴레이에 연결되어 있지 않습니다.`);
   }

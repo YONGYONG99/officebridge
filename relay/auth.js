@@ -3,6 +3,7 @@
 // 로그인 화면/POST 처리만 OAuth 리다이렉트로 바꾸면 됨 (세션 구조는 그대로).
 const crypto = require('crypto');
 const { getUsers } = require('./policy');
+const audit = require('./audit');
 
 // sessionId → { email, name, createdAt }
 const sessions = new Map();
@@ -99,13 +100,20 @@ function handleAuthRoutes(req, res) {
       const user = getUsers()[email];
       const hash = crypto.createHash('sha256').update(password).digest('hex');
       if (!user || user.passwordHash !== hash) {
-        console.log(`[auth] ❌ 로그인 실패: ${email}`);
+        audit.record({
+          type: 'LOGIN', decision: 'FAIL',
+          email, ip: audit.clientIp(req),
+          reason: user ? '비밀번호 불일치' : '존재하지 않는 계정',
+        });
         res.writeHead(401, { 'content-type': 'text/html; charset=utf-8' });
         return res.end(loginPage(next, '이메일 또는 비밀번호가 올바르지 않습니다.'));
       }
       const sid = crypto.randomUUID();
       sessions.set(sid, { email, name: user.name, createdAt: Date.now() });
-      console.log(`[auth] 로그인: ${user.name} <${email}>`);
+      audit.record({
+        type: 'LOGIN', decision: 'OK',
+        email, name: user.name, ip: audit.clientIp(req), reason: '비밀번호 인증 성공',
+      });
       res.writeHead(302, {
         'set-cookie': `ob_session=${sid}; Path=/; HttpOnly${cookieDomainAttr(req.headers.host)}`,
         location: next.startsWith('/') ? next : '/',
@@ -119,7 +127,10 @@ function handleAuthRoutes(req, res) {
     const session = getSession(req);
     if (session) {
       sessions.delete(session.sid);
-      console.log(`[auth] 로그아웃: ${session.email}`);
+      audit.record({
+        type: 'LOGOUT', decision: 'OK',
+        email: session.email, name: session.name, ip: audit.clientIp(req),
+      });
     }
     res.writeHead(302, {
       'set-cookie': `ob_session=; Path=/; Max-Age=0${cookieDomainAttr(req.headers.host)}`,
