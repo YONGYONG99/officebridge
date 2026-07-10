@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OfficeBridge 사업계획서</title>
+<style>
+  :root{
+    --navy:#14224e; --navy2:#1d2f66; --blue:#2b4fd8; --ink:#1f2733;
+    --muted:#5b6577; --line:#dfe5ef; --bg:#f4f6fa; --soft:#eef1f6;
+    --green:#1e8e5a; --red:#c0392b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--ink);font-size:10.5pt;line-height:1.65;background:#666}
+
+  /* A4 페이지 */
+  .page{width:210mm;min-height:297mm;background:#fff;margin:0 auto 8mm;padding:20mm 18mm;position:relative;page-break-after:always;overflow:hidden}
+  .page:last-child{page-break-after:auto}
+  @page{size:A4;margin:0}
+  @media print{ body{background:#fff} .page{margin:0;box-shadow:none} }
+
+  h1{font-size:22pt;color:var(--navy);font-weight:800;letter-spacing:-.5px;line-height:1.25}
+  h2{font-size:15pt;color:var(--navy);font-weight:800;margin-bottom:10px;padding-bottom:8px;border-bottom:2.5px solid var(--navy);letter-spacing:-.3px}
+  h3{font-size:11.5pt;color:var(--navy2);font-weight:700;margin:16px 0 7px}
+  p{margin-bottom:8px;color:#2b3444}
+  strong{color:var(--navy)}
+  .muted{color:var(--muted)}
+  ul{margin:6px 0 10px 0;padding-left:0;list-style:none}
+  li{position:relative;padding-left:16px;margin-bottom:6px;color:#2b3444}
+  li:before{content:'';position:absolute;left:2px;top:8px;width:5px;height:5px;border-radius:1px;background:var(--blue)}
+
+  .sec-tag{display:inline-block;font-size:8.5pt;font-weight:800;letter-spacing:1px;color:var(--blue);margin-bottom:4px}
+  .logo{font-size:15pt;color:var(--navy);letter-spacing:-.3px}
+  .logo b{font-weight:800}.logo b i{font-style:normal;color:#9aa3b5}
+
+  .card{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+  .card.blue{background:#eaf0ff;border-color:#c9d7fb}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+  table{width:100%;border-collapse:collapse;font-size:9.7pt;margin:8px 0 12px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff;font-weight:700;font-size:9.5pt}
+  tr:nth-child(even) td{background:#f7f9fc}
+  .center{text-align:center}
+  .ok{color:var(--green);font-weight:700}
+  .no{color:var(--red);font-weight:700}
+
+  .kpi{display:flex;gap:10px;margin:10px 0}
+  .kpi .box{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+  .kpi .n{font-size:19pt;font-weight:800;color:var(--navy);line-height:1.1}
+  .kpi .l{font-size:8.5pt;color:var(--muted);margin-top:4px}
+
+  .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+  .flow .node{background:#fff;border:1.5px solid var(--navy);border-radius:8px;padding:7px 11px;font-size:9pt;font-weight:700;color:var(--navy)}
+  .flow .arr{color:var(--blue);font-weight:800}
+
+  .foot{position:absolute;bottom:12mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:8pt;color:#9aa3b5;border-top:1px solid var(--line);padding-top:6px}
+
+  /* 표지 */
+  .cover{background:linear-gradient(150deg,#16255c 0%,#0d1738 100%);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:30mm 22mm}
+  .cover .logo{color:#fff;font-size:20pt;margin-bottom:60mm}
+  .cover .logo b i{color:#8fa2d8}
+  .cover .cat{font-size:11pt;letter-spacing:3px;color:#8fa2d8;font-weight:700;margin-bottom:10px}
+  .cover h1{color:#fff;font-size:32pt;line-height:1.3;margin-bottom:14px}
+  .cover .tagline{font-size:13pt;color:#c2cae3;line-height:1.7;margin-bottom:40mm}
+  .cover .meta{font-size:10pt;color:#aab3cc;line-height:1.9;border-top:1px solid #33436f;padding-top:16px}
+  .cover .meta b{color:#fff}
+  .badge{display:inline-block;background:#2b4fd8;color:#fff;font-size:9pt;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<!-- ── 표지 ── -->
+<section class="page cover">
+  <div class="logo">Office<b>BR<i>I</i>DGE</b></div>
+  <div class="cat">ZERO TRUST NETWORK ACCESS</div>
+  <h1>VPN을 대체하는<br>클라우드형 제로트러스트<br>접근 보안</h1>
+  <div class="tagline">보안팀도, 방화벽도 없는 회사를 위한<br>가장 쉬운 사내 시스템 원격 접근 보안</div>
+  <div class="meta">
+    <div><b>제품명</b> &nbsp; OfficeBridge (오피스브릿지)</div>
+    <div><b>구분</b> &nbsp; 사업계획서 · 지란지교소프트 사내 해커톤 2026</div>
+    <div><b>팀</b> &nbsp; 팀 AMD</div>
+    <div><b>작성일</b> &nbsp; 2026. 07. 10</div>
+  </div>
+</section>
+
+<!-- ── 1. 개요 ── -->
+<section class="page">
+  <span class="sec-tag">EXECUTIVE SUMMARY</span>
+  <h1 style="margin-bottom:16px">01. 제품 개요</h1>
+
+  <div class="card blue">
+    <p style="margin:0;font-size:11pt"><strong>OfficeBridge는 VPN을 대체하는 클라이언트리스 제로트러스트 게이트웨이입니다.</strong> 직원은 브라우저만으로 인가된 사내 시스템(ERP·그룹웨어·GitLab 등)에 접속하고, 사내에 설치한 커넥터가 아웃바운드 터널로 연결해 <strong>방화벽 인바운드 개방이 전혀 필요 없습니다.</strong> 부서·개인별 접근 정책, 로그인 이후에도 매 요청을 재검증하는 행위 기반 지속 검증(Continuous Verification), 실시간 감사 로그와 계정 즉시 차단을 관리자 콘솔에서 통합 관리합니다.</p>
+  </div>
+
+  <h3>한 줄 정의</h3>
+  <p>“VPN 없이, 브라우저만으로, 인가된 사내 시스템에만 접근하게 하는 제로트러스트 게이트웨이”</p>
+
+  <h3>핵심 가치</h3>
+  <div class="kpi">
+    <div class="box"><div class="n">0</div><div class="l">방화벽 인바운드 개방</div></div>
+    <div class="box"><div class="n">0</div><div class="l">직원 PC 설치 (클라이언트리스)</div></div>
+    <div class="box"><div class="n">5분</div><div class="l">고객사 도입 소요</div></div>
+    <div class="box"><div class="n">앱 단위</div><div class="l">최소 권한 접근 통제</div></div>
+  </div>
+
+  <h3>왜 지금인가</h3>
+  <ul>
+    <li>재택·외근·협력사 접근이 일상화되며 경계(perimeter) 기반 보안 모델이 붕괴 — 글로벌은 VPN에서 ZTNA로 이동 중</li>
+    <li>최근 대형 침해사고 상당수가 인터넷에 노출된 VPN 장비의 취약점에서 시작 (Ivanti·Fortinet 등)</li>
+    <li>국내 중소기업은 방화벽·VPN 장비와 보안 인력을 갖추기 어려워, 포트포워딩 등 무방비 상태로 사내 시스템을 노출 — 랜섬웨어의 주요 침투 경로</li>
+    <li>글로벌 ZTNA(Cloudflare·Zscaler)는 해외 SaaS라 데이터 주권·언어·가격 장벽으로 국내 중소기업이 도입하기 어려움</li>
+  </ul>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>01</span></div>
+</section>
+
+<!-- ── 2. 문제 정의 ── -->
+<section class="page">
+  <span class="sec-tag">PROBLEM</span>
+  <h2>02. 문제 정의 — VPN의 한계</h2>
+
+  <p>기존 원격 접속의 표준인 VPN은 “한 번 접속하면 사내망 전체를 신뢰”하는 구조로, 다음과 같은 근본적 한계를 가집니다.</p>
+
+  <table>
+    <tr><th style="width:26%">문제</th><th>내용</th></tr>
+    <tr><td><strong>과도한 접근 권한</strong></td><td>VPN 접속 = 사내망 전체 진입. 계정 하나만 탈취되어도 내부 이동(lateral movement)으로 전산망 전체가 위험에 노출</td></tr>
+    <tr><td><strong>공격 표면 노출</strong></td><td>VPN 장비가 인터넷에 직접 노출. 장비 취약점이 곧 침해 사고의 진입점 (CVE 단골 대상)</td></tr>
+    <tr><td><strong>정적 신뢰</strong></td><td>로그인 한 번 성공하면 세션 내내 신뢰 — 세션 탈취·내부자 이상행위에 무방비</td></tr>
+    <tr><td><strong>운영 부담</strong></td><td>전 직원 PC에 클라이언트 설치·업데이트·장애 대응이 필요</td></tr>
+    <tr><td><strong>느린 권한 회수</strong></td><td>퇴사자·사고 계정의 접근 차단이 즉각적이지 않아 감사 지적사항으로 이어짐</td></tr>
+  </table>
+
+  <h3>우리의 진짜 경쟁 상대는 “무방비”입니다</h3>
+  <div class="card">
+    <p style="margin:0">방화벽·VPN 장비를 살 예산과 보안 인력이 없는 중소기업은 대부분 <strong>공유기 포트포워딩으로 NAS·원격데스크톱(RDP)·ERP 서버를 인터넷에 그대로 노출</strong>하고 비밀번호 하나로 방어하고 있습니다. 국내 랜섬웨어 감염의 주요 경로가 바로 이 “인터넷에 노출된 원격 접속”입니다. OfficeBridge의 경쟁 상대는 값비싼 글로벌 ZTNA가 아니라, <strong>지킬 수단이 없는 현재의 무방비 상태</strong>입니다.</p>
+  </div>
+
+  <h3>타깃 고객</h3>
+  <ul>
+    <li><strong>1차 타깃</strong> — 사내에 서버(ERP·NAS·개발서버·생산관리)를 두어야 하지만, 보안 장비와 전담 인력이 없는 국내 중소기업 (제조·개발 외주사·병원·회계사무소 등)</li>
+    <li><strong>관리자 페르소나</strong> — 전산을 겸직하는 총무 담당자. 전문 보안 지식 없이도 “눈에 보이는 통제”와 “쉬운 도입”을 원함</li>
+    <li><strong>사용자 페르소나</strong> — 외근·재택 중 노트북으로 사내 시스템에 접속해야 하는 직원. VPN 앱 설치·끊김에 스트레스</li>
+  </ul>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>02</span></div>
+</section>
+
+<!-- ── 3. 솔루션 / 아키텍처 ── -->
+<section class="page">
+  <span class="sec-tag">SOLUTION</span>
+  <h2>03. 솔루션 &amp; 작동 원리</h2>
+
+  <p>OfficeBridge는 <strong>릴레이 서버(벤더 운영)</strong>와 <strong>커넥터(고객사 설치)</strong>로 구성됩니다. 핵심은 커넥터가 사내에서 <strong>밖으로(아웃바운드)</strong> 터널을 열어두는 구조로, 고객사 방화벽에 어떤 인바운드 포트도 열 필요가 없다는 점입니다.</p>
+
+  <div class="flow">
+    <span class="node">외부 직원 브라우저</span><span class="arr">→ 443 →</span>
+    <span class="node">릴레이 (벤더 IDC)</span><span class="arr">← 터널 ←</span>
+    <span class="node">커넥터 (고객사)</span><span class="arr">→</span>
+    <span class="node">사내 시스템</span>
+  </div>
+
+  <h3>요청 처리 4단계 검문</h3>
+  <div class="flow">
+    <span class="node">① 인증 (누구?)</span><span class="arr">→</span>
+    <span class="node">② 정책 (되는 앱?)</span><span class="arr">→</span>
+    <span class="node">③ 행위 검증 (지금 안전?)</span><span class="arr">→</span>
+    <span class="node">④ 터널 전달</span>
+  </div>
+  <p class="muted" style="font-size:9pt">인증된 세션이라도 매 요청마다 ①~③을 다시 통과해야만 사내 시스템에 도달합니다. 차단된 요청은 사내망에 <strong>패킷조차 도달하지 않습니다.</strong></p>
+
+  <h3>VPN 대비 강점</h3>
+  <table>
+    <tr><th style="width:34%">항목</th><th>VPN</th><th>OfficeBridge</th></tr>
+    <tr><td>접근 범위</td><td class="no">망 전체</td><td class="ok">앱 단위 (허가된 것만)</td></tr>
+    <tr><td>신뢰 모델</td><td class="no">1회 로그인 후 지속 신뢰</td><td class="ok">요청마다 재검증</td></tr>
+    <tr><td>방화벽 인바운드</td><td class="no">장비 인터넷 노출</td><td class="ok">개방 0개 (아웃바운드만)</td></tr>
+    <tr><td>직원 PC 설치</td><td class="no">클라이언트 필수</td><td class="ok">불필요 (브라우저)</td></tr>
+    <tr><td>권한 회수</td><td class="no">느림</td><td class="ok">클릭 한 번, 즉시</td></tr>
+    <tr><td>도입 비용</td><td class="no">장비 구매(CAPEX)</td><td class="ok">구독(OPEX), 0원 초기비용</td></tr>
+  </table>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>03</span></div>
+</section>
+
+<!-- ── 4. 핵심 기능 ── -->
+<section class="page">
+  <span class="sec-tag">FEATURES</span>
+  <h2>04. 핵심 기능 (구현 완료)</h2>
+
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">클라이언트리스 접속</h3><p style="margin:0" class="muted">직원은 브라우저로 대표 포털에 접속해 본인에게 허가된 시스템만 확인·이용. 권한 없는 시스템은 잠금 표시.</p></div>
+    <div class="card"><h3 style="margin-top:0">아웃바운드 터널</h3><p style="margin:0" class="muted">커넥터가 릴레이로 상시 아웃바운드 연결을 유지. 방화벽 인바운드 개방 불필요, 자동 재연결.</p></div>
+    <div class="card"><h3 style="margin-top:0">조직도 기반 정책</h3><p style="margin:0" class="muted">부서 단위로 접근 권한을 부여하면 소속 직원 전원에 적용. 개인별 추가 권한도 부여 가능. 즉시 반영.</p></div>
+    <div class="card"><h3 style="margin-top:0">행위 기반 지속 검증</h3><p style="margin:0" class="muted">업무시간 외 차단·요청 폭주 차단·세션 IP 고정·로그인 실패 잠금·세션 수명 제한 등 룰셋을 매 요청 재검증.</p></div>
+    <div class="card"><h3 style="margin-top:0">실시간 감사 로그</h3><p style="margin:0" class="muted">누가·언제·어느 시스템에·어떤 판정으로 접근했는지 전량 기록. 허용/차단 필터, 관리자 조치 이력 별도 관리.</p></div>
+    <div class="card"><h3 style="margin-top:0">계정·세션 즉시 통제</h3><p style="margin:0" class="muted">활성 세션 강제 종료, 계정 차단 시 전 세션 폐기 + 재로그인 거부. 퇴사자 권한 회수 즉시.</p></div>
+  </div>
+
+  <h3>관리자 콘솔</h3>
+  <p class="muted" style="font-size:9.5pt">대시보드 · 사내시스템 등록 · 정책 접근관리 · 행위 기반 제어 · 활성세션/계정통제 · 시스템 접속로그 · 관리자 로그 — 7개 메뉴로 전 기능을 웹에서 통합 관리. 사내 시스템 등록은 라벨·내부주소 입력만으로 <strong>1분 내 온보딩.</strong></p>
+
+  <div class="card blue">
+    <p style="margin:0"><strong>도입 절차</strong> ① 가입·커넥터 발급 → ② 사내 서버에 커넥터 실행 → ③ 사내 시스템 등록 → ④ 부서별 정책 설정 → ⑤ 직원에게 포털 주소만 공지. <strong>방화벽 변경 0건, 직원 PC 설치 0건.</strong></p>
+  </div>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>04</span></div>
+</section>
+
+<!-- ── 5. 차별점 & 시장 ── -->
+<section class="page">
+  <span class="sec-tag">DIFFERENTIATION &amp; MARKET</span>
+  <h2>05. 차별점 &amp; 시장</h2>
+
+  <h3>경쟁 구도</h3>
+  <table>
+    <tr><th style="width:22%">구분</th><th>글로벌 ZTNA<br>(Cloudflare·Zscaler)</th><th>기존 VPN 장비</th><th>OfficeBridge</th></tr>
+    <tr><td>타깃</td><td>대기업</td><td>중견·대기업</td><td class="ok">보안팀 없는 중소기업</td></tr>
+    <tr><td>도입 난이도</td><td>높음(영어·셀프서브)</td><td>높음(장비·공사)</td><td class="ok">낮음(5분)</td></tr>
+    <tr><td>데이터 주권</td><td class="no">해외 경유</td><td>자체</td><td class="ok">국내 IDC</td></tr>
+    <tr><td>가격</td><td>고가·달러</td><td>고가 CAPEX</td><td class="ok">저가 구독</td></tr>
+  </table>
+
+  <h3>핵심 차별점</h3>
+  <ul>
+    <li><strong>보안팀 없는 중소기업 특화</strong> — 글로벌 벤더가 무시하는 로컬 세그먼트. 자연어에 가까운 정책 설정과 5분 도입으로 전문 인력 없이 운영</li>
+    <li><strong>국내 IDC 기반</strong> — 트래픽이 해외를 경유하지 않아 데이터 주권·컴플라이언스에 유리</li>
+    <li><strong>도입 마찰 최소</strong> — 방화벽 변경·직원 PC 설치·네트워크 공사 0건</li>
+    <li><strong>엔드포인트 보안과의 연동 확장성</strong> — PC 보안 상태를 접속 조건으로 결합 (로드맵 참조)</li>
+  </ul>
+
+  <h3>시장 진입 전략</h3>
+  <ul>
+    <li>“보안”보다 <strong>“VPN 스트레스 없는 편리한 원격 접속”</strong>이라는 당장 체감되는 효용으로 접근</li>
+    <li>중기부 클라우드 바우처·KISA 중소기업 정보보호 지원 등 <strong>정부 지원사업 연계</strong>로 지불 장벽 완화</li>
+  </ul>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>05</span></div>
+</section>
+
+<!-- ── 6. 비즈니스 모델 ── -->
+<section class="page">
+  <span class="sec-tag">BUSINESS MODEL</span>
+  <h2>06. 비즈니스 모델</h2>
+
+  <p>장비 구매(CAPEX)를 구독(OPEX)으로 전환하는 <strong>SaaS 구독 모델</strong>입니다. 릴레이는 멀티테넌트로 운영되어 고객 추가의 한계비용이 낮고, 커넥터는 고객사 자원에서 구동됩니다.</p>
+
+  <h3>요금 구조 (예시)</h3>
+  <table>
+    <tr><th>플랜</th><th>대상</th><th>가격 (예시·가정)</th><th>특징</th></tr>
+    <tr><td>Basic</td><td>~30인 소기업</td><td>1인 월 3,000원</td><td>포털·정책·감사 로그</td></tr>
+    <tr><td>Pro</td><td>30~300인</td><td>1인 월 5,000원</td><td>행위 기반 제어·엔드포인트 연동</td></tr>
+    <tr><td>Enterprise</td><td>데이터 민감 고객</td><td>별도 견적</td><td>전용 릴레이·온프레미스</td></tr>
+  </table>
+  <p class="muted" style="font-size:8.5pt">※ 상기 금액은 시장 진입 가정치이며 실제 정책 수립 시 조정 예정.</p>
+
+  <h3>매출 시뮬레이션 (예시)</h3>
+  <div class="kpi">
+    <div class="box"><div class="n">100개사</div><div class="l">고객사 (평균 50인 기준)</div></div>
+    <div class="box"><div class="n">~3억+</div><div class="l">연 매출 (예시)</div></div>
+    <div class="box"><div class="n">1,000개사</div><div class="l">확산 시</div></div>
+    <div class="box"><div class="n">~30억+</div><div class="l">연 매출 (예시)</div></div>
+  </div>
+
+  <h3>지란지교소프트 시너지 (전략적 강점)</h3>
+  <p>본 사업의 난관(브랜드 신뢰·유통 채널·운영 인프라)이 지란지교소프트의 기존 자산과 정확히 맞물립니다.</p>
+  <table>
+    <tr><th style="width:38%">이 사업의 난관</th><th>지란지교소프트가 보유한 자산</th></tr>
+    <tr><td>보안 브랜드 신뢰</td><td>20년+ 국내 보안 SW 브랜드</td></tr>
+    <tr><td>중소기업 영업 채널</td><td>기존 제품(OfficeKeeper 등)으로 확보한 다수 중소기업 고객·총판망</td></tr>
+    <tr><td>운영 인프라</td><td>자체 IDC·SaaS 운영 경험</td></tr>
+    <tr><td>제품 연계</td><td>엔드포인트·문서보안 제품에 “원격접속 보안”을 번들·크로스셀</td></tr>
+  </table>
+  <p class="muted" style="font-size:9pt">신규 시장 개척이 아니라 <strong>기존 고객에게 신규 가치를 얹는</strong> 구조 — “이미 OfficeKeeper 쓰시죠? 재택·외근 접속은 어떻게 하세요?”가 곧 영업 멘트가 됩니다.</p>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>06</span></div>
+</section>
+
+<!-- ── 7. 향후 로드맵 ── -->
+<section class="page">
+  <span class="sec-tag">ROADMAP</span>
+  <h2>07. 향후 개발 로드맵</h2>
+
+  <h3>1. 지란지교소프트 서비스와의 연결</h3>
+  <div class="card">
+    <p style="margin:0 0 6px"><strong>1-1) 에이전트 기반 배포 + 조직도 공유</strong></p>
+    <p style="margin:0" class="muted">고객사는 이미 지란지교 제품 사용을 위한 SW를 PC마다 배포·운영하고 있으며, 조직 관리자가 구성한 조직도를 사용합니다. 현재의 커넥터 기반을 <strong>에이전트 기반으로 확장</strong>해 우리 제품과 함께 배포하면, <strong>동일한 조직도를 그대로 재사용</strong>할 수 있습니다. 별도 사용자·조직 관리 없이 즉시 정책 연동이 가능합니다.</p>
+  </div>
+  <div class="card">
+    <p style="margin:0 0 6px"><strong>1-2) PC 보안 점수 기반 접근 제어 (OfficeKeeper 연동)</strong></p>
+    <p style="margin:0" class="muted">지란지교 제품은 PC 취약점 점검 기능을 제공하여, 관리자가 지정한 정책에 따라 <strong>PC 보안 점수를 산출</strong>하고 단말의 안전 여부를 판단합니다. 이를 OfficeBridge에 연동해 <strong>안전한 PC(기준 점수 이상)에서만 접속을 허용</strong>하도록 구성할 수 있습니다. 백신 미설치·미조치 취약점이 있는 기기의 사내 접근을 원천 차단합니다. <span class="ok">(관리자 콘솔 UI 반영 완료, 판정 로직 연동 예정)</span></p>
+  </div>
+
+  <h3>2. 사용자 계정 보안 강화 — MFA</h3>
+  <div class="card">
+    <p style="margin:0" class="muted">비밀번호 인증에 더해 <strong>다중 인증(MFA)</strong>을 적용하여 계정 탈취 위험을 차단합니다. 로그인 시 추가 인증 수단(OTP·인증 앱 등)으로 본인 확인을 강화하여, 자격증명 유출만으로는 접근할 수 없도록 안전성을 보장합니다.</p>
+  </div>
+
+  <h3>3. GeoIP 기반 해외 접속 차단</h3>
+  <div class="card">
+    <p style="margin:0" class="muted"><strong>GeoIP 식별</strong>을 통해 접속 IP의 국가를 판별하고, 국내에서 근무하는 조직 특성상 불필요한 <strong>해외 IP의 로그인 시도를 차단</strong>합니다. 해외 기반 자동화 공격·자격증명 대입 시도를 원천 차단하여 공격 표면을 크게 줄입니다.</p>
+  </div>
+
+  <h3>기타 확장</h3>
+  <ul>
+    <li>엔드포인트 에이전트를 통한 비웹 프로토콜(RDP·SSH·NAS) 지원</li>
+    <li>기존 SSO(OIDC) 연동 — Google Workspace·MS 365 등</li>
+    <li>커스텀 도메인·전용 릴레이(온프레미스) 옵션</li>
+  </ul>
+
+  <div class="foot"><span>OfficeBridge 사업계획서</span><span>07</span></div>
+</section>
+
+<!-- ── 8. 마무리 ── -->
+<section class="page" style="display:flex;flex-direction:column;justify-content:center;background:linear-gradient(150deg,#16255c 0%,#0d1738 100%);color:#fff">
+  <div class="logo" style="color:#fff;font-size:18pt;margin-bottom:24px">Office<b>BR<i style="color:#8fa2d8">I</i>DGE</b></div>
+  <h1 style="color:#fff;font-size:24pt;line-height:1.4;margin-bottom:20px">연결은 자유롭게,<br>보안은 엄격하게.</h1>
+  <p style="color:#c2cae3;font-size:12pt;line-height:1.9;max-width:150mm">VPN 없이 브라우저 하나로 만나는 사내 시스템. 모든 접속은 OfficeBridge가 검증하고 기록합니다. 보안팀도 방화벽도 없는 회사가, 가장 쉽게 도입하는 제로트러스트.</p>
+  <div style="margin-top:40mm;font-size:10pt;color:#aab3cc;border-top:1px solid #33436f;padding-top:16px">
+    지란지교소프트 사내 해커톤 2026 · 팀 AMD<br>
+    GitHub &nbsp; github.com/YONGYONG99/officebridge
+  </div>
+</section>
+
+</body>
+</html>
