@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OfficeBridge 발표자료</title>
+<style>
+  :root{
+    --navy:#14224e; --navy2:#1d2f66; --blue:#2b4fd8; --sky:#4f7cf7;
+    --ink:#1f2733; --muted:#7a869c; --line:#dfe5ef; --soft:#eef1f6;
+    --green:#1e8e5a; --red:#c0392b; --amber:#b7791f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:var(--ink);background:#555}
+
+  .slide{width:1280px;height:720px;background:#fff;margin:0 auto 10px;position:relative;overflow:hidden;page-break-after:always}
+  .slide:last-child{page-break-after:auto}
+  @page{size:1280px 720px;margin:0}
+  @media print{ body{background:#fff} .slide{margin:0} }
+
+  .pad{padding:56px 64px}
+  .tag{display:inline-block;font-size:13px;font-weight:800;letter-spacing:2px;color:var(--blue);margin-bottom:12px}
+  h2{font-size:34px;color:var(--navy);font-weight:800;letter-spacing:-.8px;line-height:1.25}
+  .lead{font-size:17px;color:var(--muted);margin-top:10px;line-height:1.6}
+  .logo{color:var(--navy);letter-spacing:-.3px}
+  .logo b{font-weight:800}.logo b i{font-style:normal;color:#9aa3b5}
+
+  /* 브라우저 목업 프레임 */
+  .win{border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 12px 34px rgba(20,34,78,.14);background:#fff}
+  .bar{height:30px;background:#f1f3f8;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 12px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+  .url{margin-left:10px;font-size:11px;color:#8a93a6;background:#fff;border:1px solid var(--line);border-radius:6px;padding:2px 12px}
+  .shot{width:100%;background-size:cover;background-repeat:no-repeat}
+
+  .cap{font-size:13px;color:var(--muted);text-align:center;margin-top:8px}
+  .cap b{color:var(--navy)}
+
+  /* 슬라이드 5 대시보드 2분할 */
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:14px;background:var(--soft);color:var(--navy2);margin:0 4px 4px 0}
+</style>
+</head>
+<body>
+
+<!-- 1. 표지 -->
+<section class="slide" style="background:linear-gradient(150deg,#16255c 0%,#0d1738 100%);color:#fff">
+  <div class="pad" style="height:100%;display:flex;flex-direction:column;justify-content:center">
+    <div class="logo" style="color:#fff;font-size:26px;margin-bottom:44px">Office<b>BR<i style="color:#8fa2d8">I</i>DGE</b></div>
+    <div style="font-size:14px;letter-spacing:3px;color:#8fa2d8;font-weight:700;margin-bottom:14px">ZERO TRUST NETWORK ACCESS</div>
+    <div style="font-size:52px;font-weight:800;line-height:1.25;letter-spacing:-1.5px">VPN 없이, 브라우저만으로<br>사내 시스템을 안전하게</div>
+    <div style="font-size:20px;color:#c2cae3;margin-top:22px;line-height:1.6">보안팀도 방화벽도 없는 회사를 위한 클라우드형 제로트러스트 접근 보안</div>
+    <div style="margin-top:64px;font-size:15px;color:#aab3cc;border-top:1px solid #33436f;padding-top:18px">지란지교소프트 사내 해커톤 2026 &nbsp;·&nbsp; 팀 AMD</div>
+  </div>
+</section>
+
+<!-- 2. 문제 → 해결 -->
+<section class="slide">
+  <div class="pad">
+    <span class="tag">PROBLEM → SOLUTION</span>
+    <h2>VPN은 “한 번 들어오면 다 신뢰”합니다</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:26px">
+      <div style="background:#fdecec;border:1px solid #f5c1c1;border-radius:12px;padding:20px"><div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:6px">망 전체 노출</div><div style="font-size:14px;color:#7a5a5a;line-height:1.55">계정 하나 뚫리면 사내망 전체가 위험</div></div>
+      <div style="background:#fdecec;border:1px solid #f5c1c1;border-radius:12px;padding:20px"><div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:6px">장비 인터넷 노출</div><div style="font-size:14px;color:#7a5a5a;line-height:1.55">VPN 장비 취약점이 곧 침해 진입점</div></div>
+      <div style="background:#fdecec;border:1px solid #f5c1c1;border-radius:12px;padding:20px"><div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:6px">도입 부담</div><div style="font-size:14px;color:#7a5a5a;line-height:1.55">장비 구매·직원 PC 설치·전담 인력 필요</div></div>
+    </div>
+    <div style="margin-top:30px;background:#eaf0ff;border:1px solid #c9d7fb;border-radius:14px;padding:26px 28px">
+      <div style="font-size:14px;font-weight:800;letter-spacing:1px;color:var(--blue);margin-bottom:8px">OFFICEBRIDGE</div>
+      <div style="font-size:26px;font-weight:800;color:var(--navy);line-height:1.4;letter-spacing:-.5px">브라우저만으로, <span style="color:var(--blue)">인가된 시스템에만</span> 접근.<br>방화벽 개방 0 · 직원 PC 설치 0 · 도입 5분</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 작동 원리 -->
+<section class="slide">
+  <div class="pad">
+    <span class="tag">HOW IT WORKS</span>
+    <h2>커넥터가 “안에서 밖으로” 터널을 엽니다</h2>
+    <p class="lead">고객사 방화벽에 인바운드 포트를 하나도 열지 않습니다.</p>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:38px 0 8px">
+      <div style="text-align:center;flex:1"><div style="font-size:38px">🧑‍💻</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">외부 직원<br>브라우저</div></div>
+      <div style="color:var(--blue);font-weight:800;font-size:15px">── 443 →</div>
+      <div style="text-align:center;flex:1"><div style="font-size:38px">🌉</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">릴레이<br>(벤더 IDC)</div></div>
+      <div style="color:var(--blue);font-weight:800;font-size:15px">← 터널 ──</div>
+      <div style="text-align:center;flex:1"><div style="font-size:38px">🖥️</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">커넥터<br>(고객사)</div></div>
+      <div style="color:var(--blue);font-weight:800;font-size:15px">→</div>
+      <div style="text-align:center;flex:1"><div style="font-size:38px">🔒</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">사내 시스템<br>ERP·GitLab·그룹웨어</div></div>
+    </div>
+
+    <div style="margin-top:40px">
+      <div style="font-size:15px;font-weight:800;color:var(--navy2);margin-bottom:14px">모든 요청은 4단계 검문을 통과해야 합니다 — 로그인 이후에도 매 요청 재검증</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">①</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">인증</div><div style="font-size:12px;color:var(--muted)">누구?</div></div>
+        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">②</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">정책</div><div style="font-size:12px;color:var(--muted)">되는 앱?</div></div>
+        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">③</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">행위 검증</div><div style="font-size:12px;color:var(--muted)">지금 안전?</div></div>
+        <div style="flex:1;border:1.5px solid var(--blue);border-radius:10px;padding:16px;text-align:center;background:#eaf0ff"><div style="font-size:13px;color:var(--blue)">④</div><div style="font-size:16px;font-weight:800;color:var(--blue);margin-top:2px">터널 전달</div><div style="font-size:12px;color:var(--blue)">통과</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 데모 1: 로그인 + 포털 -->
+<section class="slide" style="background:var(--soft)">
+  <div class="pad" style="padding:44px 56px">
+    <span class="tag">DEMO ① &nbsp; 임직원 접속</span>
+    <h2 style="font-size:28px">브라우저 로그인 → 내 권한의 시스템만 보인다</h2>
+    <div class="row2" style="margin-top:22px">
+      <div>
+        <div class="win"><div class="bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="url">portal.officebridge.kr</span></div>
+          <div class="shot" style="height:352px;background-image:url('docs/shots/1-login.png');background-position:center top"></div></div>
+        <div class="cap"><b>SSO 로그인</b> — 설치물 없이 브라우저만</div>
+      </div>
+      <div>
+        <div class="win"><div class="bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="url">portal.officebridge.kr</span></div>
+          <div class="shot" style="height:352px;background-image:url('docs/shots/2-portal.png');background-position:center top"></div></div>
+        <div class="cap">영업팀 김영업 — <b>GitLab은 🔒 권한 없음</b>으로 잠김</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 데모 2: 차단 + 관리자 콘솔 -->
+<section class="slide" style="background:var(--soft)">
+  <div class="pad" style="padding:44px 56px">
+    <span class="tag">DEMO ② &nbsp; 통제 &amp; 감사</span>
+    <h2 style="font-size:28px">권한 없는 접근은 차단 · 관리자 콘솔로 통합 관리</h2>
+    <div class="row2" style="margin-top:22px">
+      <div>
+        <div class="win"><div class="bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="url">gitlab.officebridge.kr</span></div>
+          <div class="shot" style="height:352px;background-image:url('docs/shots/3-denied.png');background-position:center center"></div></div>
+        <div class="cap"><b>정책 차단</b> — 요청이 사내망에 도달조차 안 함</div>
+      </div>
+      <div>
+        <div class="win"><div class="bar"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="url">portal.officebridge.kr/_ob/admin</span></div>
+          <div class="shot" style="height:352px;background-image:url('docs/shots/6-admin-rules.png');background-position:center top"></div></div>
+        <div class="cap"><b>행위 기반 지속 검증</b> · 조직도 정책 · 실시간 감사 로그</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 차별점 + 시너지 + 클로징 -->
+<section class="slide" style="background:linear-gradient(150deg,#16255c 0%,#0d1738 100%);color:#fff">
+  <div class="pad" style="height:100%;display:flex;flex-direction:column;justify-content:center">
+    <span class="tag" style="color:#8fa2d8">WHY US</span>
+    <h2 style="color:#fff;font-size:32px">글로벌이 안 하는 시장을, 지란지교가 가장 잘합니다</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px">
+      <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">보안팀 없는 중소기업 특화</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">국내 IDC 기반 · 5분 도입 · 저가 구독</div></div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">지란지교 시너지</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">기존 중소기업 고객·총판, 보안 브랜드, 자체 IDC</div></div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">OfficeKeeper 연동</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">PC 보안 점수·조직도 공유 → 안전한 단말만 접속</div></div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">로드맵</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">MFA · GeoIP 해외 접속 차단 · 에이전트 확장</div></div>
+    </div>
+    <div style="margin-top:38px;font-size:24px;font-weight:800;letter-spacing:-.5px">연결은 자유롭게, 보안은 엄격하게. &nbsp;<span style="color:#8fa2d8">OfficeBridge</span></div>
+  </div>
+</section>
+
+</body>
+</html>
