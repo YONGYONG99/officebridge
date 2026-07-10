@@ -78,62 +78,80 @@
     <h2>커넥터가 “안에서 밖으로” 터널을 엽니다</h2>
     <p class="lead">고객사 방화벽에 인바운드 포트를 하나도 열지 않습니다.</p>
 
-    <svg viewBox="0 0 1160 430" width="100%" style="margin-top:14px;font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif">
+    <svg viewBox="0 0 1160 520" width="100%" style="margin-top:10px;font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif">
       <defs>
-        <marker id="ah" markerWidth="10" markerHeight="10" refX="7.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2b4fd8"/></marker>
-        <marker id="ahg" markerWidth="10" markerHeight="10" refX="7.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#7a869c"/></marker>
+        <marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2b4fd8"/></marker>
+        <marker id="mg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#16a34a"/></marker>
+        <marker id="mr" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#dc2626"/></marker>
       </defs>
 
-      <!-- 고객사 사내망 영역 -->
-      <rect x="636" y="66" width="504" height="258" rx="14" fill="#eef1f6" stroke="#dfe5ef"/>
-      <text x="1122" y="88" text-anchor="end" font-size="13" fill="#7a869c" font-weight="700">고객사 사내망</text>
-      <!-- 방화벽 -->
-      <line x1="636" y1="66" x2="636" y2="324" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/>
-      <text x="636" y="54" text-anchor="middle" font-size="12.5" fill="#c0392b" font-weight="800">고객사 방화벽 · 인바운드 개방 0</text>
+      <!-- ── 존(zone) 배경 ── -->
+      <rect x="8" y="42" width="300" height="424" rx="16" fill="#eef3ff" stroke="#b9caf5" stroke-width="1.5" stroke-dasharray="7 5"/>
+      <text x="158" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#2b4fd8">사용자 영역</text>
 
-      <!-- 박스: 브라우저 -->
-      <rect x="24" y="150" width="156" height="96" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
-      <text x="102" y="192" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">외부 직원</text>
-      <text x="102" y="214" text-anchor="middle" font-size="12.5" fill="#7a869c">브라우저 (설치物 X)</text>
+      <rect x="356" y="42" width="452" height="424" rx="16" fill="#edfbf4" stroke="#a7e3c6" stroke-width="1.5" stroke-dasharray="7 5"/>
+      <text x="582" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#16a34a">OfficeBRIDGE 클라우드 (국내 IDC)</text>
 
-      <!-- 박스: 릴레이 -->
-      <rect x="300" y="118" width="270" height="160" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
-      <text x="435" y="145" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">릴레이 (벤더 IDC)</text>
-      <rect x="316" y="162" width="76" height="30" rx="15" fill="#eef1f6" stroke="#c9d3e6"/><text x="354" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d2f66">인증</text>
-      <rect x="398" y="162" width="76" height="30" rx="15" fill="#eef1f6" stroke="#c9d3e6"/><text x="436" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d2f66">정책</text>
-      <rect x="480" y="162" width="74" height="30" rx="15" fill="#eaf0ff" stroke="#c9d7fb"/><text x="517" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">행위검증</text>
-      <text x="435" y="222" text-anchor="middle" font-size="11.5" fill="#7a869c">요청마다 재검증 · 감사 로그 기록</text>
+      <rect x="852" y="42" width="300" height="424" rx="16" fill="#fdeef0" stroke="#f3c0c6" stroke-width="1.5" stroke-dasharray="7 5"/>
+      <text x="1002" y="76" text-anchor="middle" font-size="15" font-weight="800" fill="#dc2626">사내망 (방화벽 내부)</text>
 
-      <!-- 박스: 커넥터 -->
-      <rect x="700" y="150" width="168" height="96" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
-      <text x="784" y="192" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">커넥터</text>
-      <text x="784" y="214" text-anchor="middle" font-size="12.5" fill="#7a869c">고객사 설치 · 무설정</text>
+      <!-- 방화벽 라인 -->
+      <line x1="840" y1="46" x2="840" y2="500" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <rect x="805" y="486" width="70" height="26" rx="8" fill="#fff" stroke="#f3c0c6"/><text x="840" y="503" text-anchor="middle" font-size="12" font-weight="700" fill="#dc2626">방화벽</text>
 
-      <!-- 박스: 사내 시스템 -->
-      <rect x="952" y="132" width="182" height="132" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
-      <text x="1043" y="170" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">사내 시스템</text>
-      <text x="1043" y="194" text-anchor="middle" font-size="12" fill="#7a869c">ERP · GitLab</text>
-      <text x="1043" y="212" text-anchor="middle" font-size="12" fill="#7a869c">그룹웨어 …</text>
+      <!-- ── 사용자 PC ── -->
+      <rect x="68" y="188" width="180" height="150" rx="14" fill="#fff" stroke="#2b4fd8" stroke-width="1.6"/>
+      <rect x="133" y="218" width="50" height="34" rx="4" fill="#dbe6ff" stroke="#2b4fd8" stroke-width="2"/>
+      <rect x="150" y="252" width="16" height="7" fill="#2b4fd8"/><rect x="140" y="258" width="36" height="5" rx="2" fill="#2b4fd8"/>
+      <text x="158" y="296" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">사용자 PC</text>
+      <text x="158" y="316" text-anchor="middle" font-size="12" fill="#7a869c">브라우저만 사용</text>
 
-      <!-- ① 브라우저 → 릴레이 -->
-      <line x1="180" y1="190" x2="298" y2="190" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
-      <text x="238" y="178" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">① 요청</text>
-      <text x="238" y="207" text-anchor="middle" font-size="11" fill="#7a869c">HTTPS 443</text>
+      <!-- ── 릴레이 ── -->
+      <rect x="482" y="150" width="200" height="118" rx="14" fill="#fff" stroke="#16a34a" stroke-width="1.6"/>
+      <path d="M582 168 l22 7 v15 c0 15 -10 24 -22 30 c-12 -6 -22 -15 -22 -30 v-15 z" fill="#d6f5e3" stroke="#16a34a" stroke-width="1.6"/>
+      <path d="M572 191 l7 7 l14 -15" fill="none" stroke="#16a34a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="582" y="252" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">릴레이</text>
 
-      <!-- ② 릴레이 → 커넥터 (터널로 전달) -->
-      <line x1="570" y1="176" x2="698" y2="176" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
-      <text x="634" y="164" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">② 터널로 전달</text>
-      <!-- 터널 상시연결(아웃바운드) 표시 -->
-      <line x1="698" y1="224" x2="572" y2="224" stroke="#7a869c" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
-      <text x="634" y="246" text-anchor="middle" font-size="11" fill="#7a869c">터널 상시 연결 (커넥터가 먼저 아웃바운드)</text>
+      <!-- 인증·정책 엔진 -->
+      <line x1="582" y1="268" x2="582" y2="322" stroke="#a7e3c6" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <rect x="472" y="322" width="220" height="98" rx="14" fill="#fff" stroke="#a7e3c6" stroke-width="1.6"/>
+      <text x="582" y="356" text-anchor="middle" font-size="15" font-weight="800" fill="#14224e">인증 · 정책 엔진</text>
+      <text x="582" y="382" text-anchor="middle" font-size="12" fill="#7a869c">SSO / 행위 분석 / 접근 제어</text>
 
-      <!-- ③ 커넥터 → 사내 시스템 -->
-      <line x1="868" y1="190" x2="950" y2="190" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
-      <text x="909" y="178" text-anchor="middle" font-size="12" font-weight="700" fill="#2b4fd8">③ 사내 요청</text>
+      <!-- ── 커넥터 ── -->
+      <rect x="962" y="150" width="180" height="118" rx="14" fill="#fff" stroke="#dc2626" stroke-width="1.6"/>
+      <circle cx="1052" cy="190" r="17" fill="#fde8e8" stroke="#dc2626" stroke-width="2"/>
+      <path d="M1045 183 l14 14 M1059 183 l-14 14" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+      <text x="1052" y="238" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">커넥터</text>
+      <text x="1052" y="258" text-anchor="middle" font-size="12" fill="#7a869c">사내망 배치</text>
 
-      <!-- ④ 응답 역방향 -->
-      <path d="M1043,264 L1043,360 L102,360 L102,248" fill="none" stroke="#7a869c" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ahg)"/>
-      <text x="572" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#7a869c">④ 응답 — 동일 경로 역방향으로 반환</text>
+      <!-- 사내 시스템들 -->
+      <rect x="876" y="360" width="76" height="58" rx="10" fill="#fef2f2" stroke="#f3c0c6"/><text x="914" y="394" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">ERP</text>
+      <rect x="964" y="360" width="86" height="58" rx="10" fill="#fef2f2" stroke="#f3c0c6"/><text x="1007" y="394" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">그룹웨어</text>
+      <rect x="1062" y="360" width="76" height="58" rx="10" fill="#fef2f2" stroke="#f3c0c6"/><text x="1100" y="394" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">위키</text>
+      <path d="M1040 268 L930 356" stroke="#dc2626" stroke-width="1.6" marker-end="url(#mr)"/>
+      <path d="M1052 268 L1050 354" stroke="#dc2626" stroke-width="1.6" marker-end="url(#mr)"/>
+      <path d="M1064 268 L1092 354" stroke="#dc2626" stroke-width="1.6" marker-end="url(#mr)"/>
+
+      <!-- ── PC ↔ 릴레이 ── -->
+      <line x1="250" y1="222" x2="479" y2="222" stroke="#2b4fd8" stroke-width="2.4" marker-end="url(#mb)"/>
+      <rect x="300" y="210" width="98" height="24" rx="6" fill="#2b4fd8"/><text x="349" y="227" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">HTTPS 요청</text>
+      <line x1="479" y1="262" x2="250" y2="262" stroke="#2b4fd8" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#mb)"/>
+      <rect x="292" y="250" width="114" height="24" rx="6" fill="#eef3ff" stroke="#b9caf5"/><text x="349" y="267" text-anchor="middle" font-size="12" font-weight="700" fill="#2b4fd8">암호화된 응답</text>
+
+      <!-- ── 릴레이 ↔ 커넥터 ── -->
+      <line x1="960" y1="222" x2="685" y2="222" stroke="#16a34a" stroke-width="2.4" marker-end="url(#mg)"/>
+      <rect x="758" y="210" width="128" height="24" rx="6" fill="#16a34a"/><text x="822" y="227" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">아웃바운드 443 전용</text>
+      <line x1="685" y1="262" x2="960" y2="262" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#mg)"/>
+      <rect x="748" y="250" width="148" height="24" rx="6" fill="#edfbf4" stroke="#a7e3c6"/><text x="822" y="267" text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">암호화 터널 (TLS)</text>
+
+      <!-- ── 하단 요약 배지 ── -->
+      <rect x="300" y="484" width="250" height="30" rx="15" fill="#16a34a"/>
+      <path d="M319 499 l5 5 l9 -10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="345" y="504" font-size="12.5" font-weight="700" fill="#fff">커넥터 → 릴레이 아웃바운드만</text>
+      <rect x="588" y="484" width="200" height="30" rx="15" fill="#dc2626"/>
+      <circle cx="608" cy="499" r="7.5" fill="none" stroke="#fff" stroke-width="1.8"/><line x1="603" y1="504" x2="613" y2="494" stroke="#fff" stroke-width="1.8"/>
+      <text x="624" y="504" font-size="12.5" font-weight="700" fill="#fff">인바운드 포트 0개</text>
     </svg>
   </div>
 </section>
@@ -182,7 +200,7 @@
 <section class="slide" style="background:linear-gradient(150deg,#16255c 0%,#0d1738 100%);color:#fff">
   <div class="pad" style="height:100%;display:flex;flex-direction:column;justify-content:center">
     <span class="tag" style="color:#8fa2d8">WHY US</span>
-    <h2 style="color:#fff;font-size:32px">더 편리하고, 더 안전하게.</h2>
+    <h2 style="color:#fff;font-size:32px">연결은 자유롭게<br>보안은 엄격하게.</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px">
       <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">보안팀 없는 중소기업 특화</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">국내 IDC 기반 · 5분 도입 · 저가 구독</div></div>
       <div style="background:rgba(255,255,255,.06);border:1px solid #33436f;border-radius:12px;padding:20px 22px"><div style="font-size:16px;font-weight:800;margin-bottom:6px">지란지교 시너지</div><div style="font-size:14px;color:#c2cae3;line-height:1.6">기존 중소기업 고객·총판, 보안 브랜드, 자체 IDC</div></div>
