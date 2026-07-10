@@ -78,25 +78,63 @@
     <h2>커넥터가 “안에서 밖으로” 터널을 엽니다</h2>
     <p class="lead">고객사 방화벽에 인바운드 포트를 하나도 열지 않습니다.</p>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:38px 0 8px">
-      <div style="text-align:center;flex:1"><div style="font-size:38px">🧑‍💻</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">외부 직원<br>브라우저</div></div>
-      <div style="color:var(--blue);font-weight:800;font-size:15px">── 443 →</div>
-      <div style="text-align:center;flex:1"><div style="font-size:38px">🌉</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">릴레이<br>(벤더 IDC)</div></div>
-      <div style="color:var(--blue);font-weight:800;font-size:15px">← 터널 ──</div>
-      <div style="text-align:center;flex:1"><div style="font-size:38px">🖥️</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">커넥터<br>(고객사)</div></div>
-      <div style="color:var(--blue);font-weight:800;font-size:15px">→</div>
-      <div style="text-align:center;flex:1"><div style="font-size:38px">🔒</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:6px">사내 시스템<br>ERP·GitLab·그룹웨어</div></div>
-    </div>
+    <svg viewBox="0 0 1160 430" width="100%" style="margin-top:14px;font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif">
+      <defs>
+        <marker id="ah" markerWidth="10" markerHeight="10" refX="7.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2b4fd8"/></marker>
+        <marker id="ahg" markerWidth="10" markerHeight="10" refX="7.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#7a869c"/></marker>
+      </defs>
 
-    <div style="margin-top:40px">
-      <div style="font-size:15px;font-weight:800;color:var(--navy2);margin-bottom:14px">모든 요청은 4단계 검문을 통과해야 합니다 — 로그인 이후에도 매 요청 재검증</div>
-      <div style="display:flex;gap:12px">
-        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">①</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">인증</div><div style="font-size:12px;color:var(--muted)">누구?</div></div>
-        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">②</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">정책</div><div style="font-size:12px;color:var(--muted)">되는 앱?</div></div>
-        <div style="flex:1;border:1.5px solid var(--navy);border-radius:10px;padding:16px;text-align:center"><div style="font-size:13px;color:var(--muted)">③</div><div style="font-size:16px;font-weight:800;color:var(--navy);margin-top:2px">행위 검증</div><div style="font-size:12px;color:var(--muted)">지금 안전?</div></div>
-        <div style="flex:1;border:1.5px solid var(--blue);border-radius:10px;padding:16px;text-align:center;background:#eaf0ff"><div style="font-size:13px;color:var(--blue)">④</div><div style="font-size:16px;font-weight:800;color:var(--blue);margin-top:2px">터널 전달</div><div style="font-size:12px;color:var(--blue)">통과</div></div>
-      </div>
-    </div>
+      <!-- 고객사 사내망 영역 -->
+      <rect x="636" y="66" width="504" height="258" rx="14" fill="#eef1f6" stroke="#dfe5ef"/>
+      <text x="1122" y="88" text-anchor="end" font-size="13" fill="#7a869c" font-weight="700">고객사 사내망</text>
+      <!-- 방화벽 -->
+      <line x1="636" y1="66" x2="636" y2="324" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="636" y="54" text-anchor="middle" font-size="12.5" fill="#c0392b" font-weight="800">고객사 방화벽 · 인바운드 개방 0</text>
+
+      <!-- 박스: 브라우저 -->
+      <rect x="24" y="150" width="156" height="96" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
+      <text x="102" y="192" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">외부 직원</text>
+      <text x="102" y="214" text-anchor="middle" font-size="12.5" fill="#7a869c">브라우저 (설치物 X)</text>
+
+      <!-- 박스: 릴레이 -->
+      <rect x="300" y="118" width="270" height="160" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
+      <text x="435" y="145" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">릴레이 (벤더 IDC)</text>
+      <rect x="316" y="162" width="76" height="30" rx="15" fill="#eef1f6" stroke="#c9d3e6"/><text x="354" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d2f66">인증</text>
+      <rect x="398" y="162" width="76" height="30" rx="15" fill="#eef1f6" stroke="#c9d3e6"/><text x="436" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d2f66">정책</text>
+      <rect x="480" y="162" width="74" height="30" rx="15" fill="#eaf0ff" stroke="#c9d7fb"/><text x="517" y="182" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">행위검증</text>
+      <text x="435" y="222" text-anchor="middle" font-size="11.5" fill="#7a869c">요청마다 재검증 · 감사 로그 기록</text>
+
+      <!-- 박스: 커넥터 -->
+      <rect x="700" y="150" width="168" height="96" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
+      <text x="784" y="192" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">커넥터</text>
+      <text x="784" y="214" text-anchor="middle" font-size="12.5" fill="#7a869c">고객사 설치 · 무설정</text>
+
+      <!-- 박스: 사내 시스템 -->
+      <rect x="952" y="132" width="182" height="132" rx="12" fill="#fff" stroke="#14224e" stroke-width="1.5"/>
+      <text x="1043" y="170" text-anchor="middle" font-size="16" font-weight="800" fill="#14224e">사내 시스템</text>
+      <text x="1043" y="194" text-anchor="middle" font-size="12" fill="#7a869c">ERP · GitLab</text>
+      <text x="1043" y="212" text-anchor="middle" font-size="12" fill="#7a869c">그룹웨어 …</text>
+
+      <!-- ① 브라우저 → 릴레이 -->
+      <line x1="180" y1="190" x2="298" y2="190" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
+      <text x="238" y="178" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">① 요청</text>
+      <text x="238" y="207" text-anchor="middle" font-size="11" fill="#7a869c">HTTPS 443</text>
+
+      <!-- ② 릴레이 → 커넥터 (터널로 전달) -->
+      <line x1="570" y1="176" x2="698" y2="176" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
+      <text x="634" y="164" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2b4fd8">② 터널로 전달</text>
+      <!-- 터널 상시연결(아웃바운드) 표시 -->
+      <line x1="698" y1="224" x2="572" y2="224" stroke="#7a869c" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
+      <text x="634" y="246" text-anchor="middle" font-size="11" fill="#7a869c">터널 상시 연결 (커넥터가 먼저 아웃바운드)</text>
+
+      <!-- ③ 커넥터 → 사내 시스템 -->
+      <line x1="868" y1="190" x2="950" y2="190" stroke="#2b4fd8" stroke-width="2" marker-end="url(#ah)"/>
+      <text x="909" y="178" text-anchor="middle" font-size="12" font-weight="700" fill="#2b4fd8">③ 사내 요청</text>
+
+      <!-- ④ 응답 역방향 -->
+      <path d="M1043,264 L1043,360 L102,360 L102,248" fill="none" stroke="#7a869c" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ahg)"/>
+      <text x="572" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#7a869c">④ 응답 — 동일 경로 역방향으로 반환</text>
+    </svg>
   </div>
 </section>
 
